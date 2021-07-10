@@ -74,12 +74,12 @@ def signal_handler(sig, frame):
     else:
         print('\n')
         print('\n')
-        print(5*rc)
+        print(5 * rc)
         print('Bytes received!\n')
-        endt = time.time()    
+        endt = time.time()
         elapsed = (endt - ttime) - 1
         print(elapsed)
-        print((5*rc)/(1e6*elapsed))
+        print((5 * rc) / (1e6 * elapsed))
         print('MBps\n')
     sys.exit(0)
     ######
@@ -99,6 +99,9 @@ while True:
         peer_name = input("peer_name>>")
         print("get peer ip...")
         udpSerSock.sendto(str.encode('%d|%s|%s' % (2,str(peer_name).strip()," ")), server_addr)
+        break
+    elif str(comd).strip()=='5':
+        ttime=time.time()
         break
                  
 ttime = time.time()

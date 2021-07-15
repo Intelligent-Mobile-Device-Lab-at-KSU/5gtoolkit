@@ -36,6 +36,7 @@ validation_msg = ""
 counter=0
 endprogram=False
 norxx=True
+epocharray = [0,0,0,0,0,0,0,0,0,0]
 timearr = [0,0,0,0,0,0,0,0,0,0]
 arrindy = 0
 
@@ -50,8 +51,10 @@ def revMsg():
     global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram, norxx, timearr, arrindy
 
     print("Starting Receive Thread:")
+    epoch=-1
     while True:
         data, addr = udpSerSock.recvfrom(1024)
+        epoch = time.time()
         data = data.decode()
         try:
             (msg_type, msg_arg1, msg_arg2) = str(data).split("|")
@@ -106,7 +109,8 @@ def revMsg():
             )
 
         elif msg_type == 7:  # Single Ping response
-            timearr[counter] = (time.time() - tmpTime)
+            epocharray[counter] = epoch
+            timearr[counter] = (epoch - tmpTime)
             #print(
             #    f"{datetime.now()} - ping received:  { (time.time() - tmpTime)}"
             #)
@@ -120,7 +124,7 @@ def revMsg():
             #        }
             #    )
             counter+=1
-            if counter == 9:
+            if counter == 10:
                 cmd_state=10
                 endprogram = True
             norxx=False
@@ -253,7 +257,7 @@ while True:
                     if device.is_connected():
                         device.send_state(
                             {
-                                "epoch": time.time(),
+                                "epoch": epocharray[indy],
                                 "resp_time": timearr[indy],
                                 "cellband": sys.argv[1],
                             }

@@ -15,8 +15,8 @@ self_ip = ""
 self_port = ""
 host_name = "client2"
 validation_msg = ""
-
-
+epocharray = [0,0,0,0,0,0,0,0,0,0]
+counter=0
 def on_command(device, command):
     print("Command received.")
     print(command["name"])
@@ -38,11 +38,13 @@ def heartbeat():
 
 
 def revMsg():
-    global peer_ip, peer_port, cmd_state
+    global peer_ip, peer_port, cmd_state, counter, epocharray
 
     print(f"{datetime.now()} - Starting Receive Thread.\n")
+    epoch = -1
     while True:
         data, addr = udpSerSock.recvfrom(1024)
+        epoch = time.time()
         data = data.decode()
 
         try:
@@ -92,9 +94,21 @@ def revMsg():
             )
 
         elif msg_type == 6:
+            epocharray[counter]=epoch
+            counter+=1
             #print(f"{datetime.now()} - peer msg:", msg_arg1, msg_arg2)
             udpSerSock.sendto(
-                ("%d|%s|%s" % (7, msg_arg1, msg_arg2)).encode(),
+                ("%d|%s|%s" % (13, msg_arg1, msg_arg2)).encode(),
+                (peer_ip, int(peer_port)),
+            )
+        elif msg_type == 13:
+            indy=0
+            mysum=0
+            while indy<=8:
+                mysum+=(epocharray[indy+1]-epocharray[indy])
+            jitter=mysum/9
+            udpSerSock.sendto(
+                ("%d|%s|%s" % (13, str(jitter), str(jitter))).encode(),
                 (peer_ip, int(peer_port)),
             )
         elif msg_type == 7:

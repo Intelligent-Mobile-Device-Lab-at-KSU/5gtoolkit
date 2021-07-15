@@ -39,7 +39,7 @@ norxx=True
 epocharray = [0,0,0,0,0,0,0,0,0,0]
 timearr = [0,0,0,0,0,0,0,0,0,0]
 arrindy = 0
-
+jitter=""
 def heartbeat():
     tmp_str = ("%d|%s|%s" % (9, "keep ", "live")).encode()
     while True:
@@ -48,7 +48,7 @@ def heartbeat():
 
 
 def revMsg():
-    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram, norxx, timearr, arrindy
+    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram, norxx, timearr, arrindy, jitter
 
     print("Starting Receive Thread:")
     epoch=-1
@@ -132,7 +132,8 @@ def revMsg():
             #else:
             #    print(f"{datetime.now()} - error Type!", str(data))
             #cmd_state = 4  # Get User Input for next action
-
+        elif msg_type == 13:
+            jitter=msg_arg1
         elif msg_type == 8:
             if validation_msg == msg_arg1:
                 print(f"{datetime.now()} - valid msg '{msg_arg1}' recevied")
@@ -235,6 +236,13 @@ while True:
                 time.sleep(.1)
             norxx=True
             if endprogram:
+                print('Getting Jitter...')
+                udpSerSock.sendto(
+                    ("%d|%s|%s" % (13, " ", " ")).encode(),
+                    (peer_ip, int(peer_port)),
+                )
+                while len(jitter)==0:
+                    time.sleep(.1)
                 print('Logging to losant')
                 # Construct device
                 device = Device(
@@ -255,13 +263,24 @@ while True:
                 while indy<=9:
                     device.loop()
                     if device.is_connected():
-                        device.send_state(
-                            {
-                                "epoch": epocharray[indy],
-                                "resp_time": timearr[indy],
-                                "cellband": sys.argv[1],
-                            }
-                        )
+                        if indy==9:
+                            device.send_state(
+                                {
+                                    "epoch": epocharray[indy],
+                                    "resp_time": timearr[indy],
+                                    "cellband": sys.argv[1],
+                                    "jitter": float(jitter),
+                                }
+                            )
+                        else:
+                            device.send_state(
+                                {
+                                    "epoch": epocharray[indy],
+                                    "resp_time": timearr[indy],
+                                    "cellband": sys.argv[1],
+                                    "jitter": 0,
+                                }
+                            )
                     indy+=1
                     time.sleep(1)
                 #{"mode":"full","isActive":false}

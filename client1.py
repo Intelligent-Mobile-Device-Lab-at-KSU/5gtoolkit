@@ -176,9 +176,6 @@ host_name = "Noname"
 # Execute the 0, 1, 2, 3 commands in turn to complete the p2p connection and chat directly
 print(f"Press [Enter] to accept defaults.")
 while True:
-    if endprogram:
-        print('done')
-        break
     # comd = input("Commend[0,1,2,3,4]>>")
     # query online host
     strip_cmd = str(cmd_state)
@@ -233,7 +230,7 @@ while True:
 
     elif strip_cmd == "6":
         print(
-            f"{datetime.now()} - Sending constant pings every 1 sec for 10 seconds.  Use CTRL-C to stop"
+            f"{datetime.now()} - Sending constant as fast as possible 10 pings.  Use CTRL-C to stop"
         )
         while True:
             tmpTime = time.time()
@@ -244,6 +241,9 @@ while True:
             while not rxx:
                 time.sleep(.1)
             rxx=False
+            if endprogram:
+                print('done')
+                break
             #time.sleep(1)
 
     elif strip_cmd == "10":

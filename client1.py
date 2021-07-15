@@ -248,7 +248,7 @@ while True:
                 # scp -P 8022 client.py u0_a212@192.168.1.168:~/.
 
                 indy=0
-                while indy<=10:
+                while indy<=9:
                     device.loop()
                     if device.is_connected():
                         device.send_state(
@@ -257,6 +257,7 @@ while True:
                                 "cellband": sys.argv[1],
                             }
                         )
+                    indy+=1
                     time.sleep(1)
                 #{"mode":"full","isActive":false}
                 print('done')

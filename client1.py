@@ -35,6 +35,7 @@ peer_name = "client2"
 validation_msg = ""
 counter=0
 endprogram=False
+rxx=False
 
 def heartbeat():
     tmp_str = ("%d|%s|%s" % (9, "keep ", "live")).encode()
@@ -44,7 +45,7 @@ def heartbeat():
 
 
 def revMsg():
-    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram
+    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram, rxx
 
     # Construct device
     device = Device(
@@ -131,10 +132,12 @@ def revMsg():
                     }
                 )
                 counter+=1
+                if counter == 10:
+                    endprogram = True
+                rxx=True
             else:
                 print(f"{datetime.now()} - error Type!", str(data))
-            if counter==10:
-                endprogram=True
+
             cmd_state = 4  # Get User Input for next action
 
         elif msg_type == 8:
@@ -238,6 +241,9 @@ while True:
                 ("%d|%s|%s" % (6, f"{time.time()}", " ")).encode(),
                 (peer_ip, int(peer_port)),
             )
+            while not rxx:
+                time.sleep(.1)
+            rxx=False
             #time.sleep(1)
 
     elif strip_cmd == "10":

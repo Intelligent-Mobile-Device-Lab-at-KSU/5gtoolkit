@@ -41,7 +41,6 @@ def revMsg():
     global peer_ip, peer_port, cmd_state, counter, epocharray
 
     print(f"{datetime.now()} - Starting Receive Thread.\n")
-    epoch = -1
     while True:
         data, addr = udpSerSock.recvfrom(1024)
         epoch = time.time()
@@ -96,7 +95,7 @@ def revMsg():
         elif msg_type == 6:
             epocharray[counter]=epoch
             counter+=1
-            #print(f"{datetime.now()} - peer msg:", msg_arg1, msg_arg2)
+            print(f"{datetime.now()} - peer msg:", msg_arg1, msg_arg2)
             udpSerSock.sendto(
                 ("%d|%s|%s" % (13, msg_arg1, msg_arg2)).encode(),
                 (peer_ip, int(peer_port)),
@@ -172,4 +171,4 @@ while True:
             break
     time.sleep(1)
 udpSerSock.close()
-{"mode":"full","isActive":false}
+#{"mode":"full","isActive":false}

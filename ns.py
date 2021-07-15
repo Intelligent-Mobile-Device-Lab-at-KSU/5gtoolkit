@@ -33,7 +33,17 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-while True:
-    udpSerSock.sendto(str.encode("0"), server_addr)
-    tx+=len(str.encode("0"))
-    time.sleep(.1)
+if (int(sys.argv[2])==0):
+    print('Sounding...')
+    while True:
+        udpSerSock.sendto(str.encode("0"), server_addr)
+        tx+=len(str.encode("0"))
+        time.sleep(.1)
+else:
+    stime = time.time();
+    while (time.time()-stime) <=10:
+        udpSerSock.sendto(str.encode("0"), server_addr)
+        tx+=len(str.encode("0"))
+        #time.sleep(.1)
+    o = "I Tx %d Bytes in 10 seconds!" % (tx)
+    print(o)

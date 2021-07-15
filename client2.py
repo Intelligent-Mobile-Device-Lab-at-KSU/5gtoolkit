@@ -97,7 +97,7 @@ def revMsg():
             counter+=1
             print(f"{datetime.now()} - peer msg:", msg_arg1, msg_arg2)
             udpSerSock.sendto(
-                ("%d|%s|%s" % (13, msg_arg1, msg_arg2)).encode(),
+                ("%d|%s|%s" % (7, msg_arg1, msg_arg2)).encode(),
                 (peer_ip, int(peer_port)),
             )
         elif msg_type == 13:

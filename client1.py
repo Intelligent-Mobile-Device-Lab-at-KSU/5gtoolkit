@@ -36,6 +36,8 @@ validation_msg = ""
 counter=0
 endprogram=False
 norxx=True
+timearr = [0,0,0,0,0,0,0,0,0,0]
+arrindy = 0
 
 def heartbeat():
     tmp_str = ("%d|%s|%s" % (9, "keep ", "live")).encode()
@@ -45,22 +47,7 @@ def heartbeat():
 
 
 def revMsg():
-    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram, rxx
-
-    # Construct device
-    device = Device(
-        device_id,
-        "236e0f54-4074-4850-b5a0-20052c8a9601",
-        "f8bf01ed21898b61a597545dfe9de4beb6c374dd0c91f2bba196298cdfc2352a",
-    )
-
-    # Listen for commands.
-    device.add_event_observer("command", on_command)
-
-    # Connect to Losant.
-    device.connect(blocking=False)
-    # scp -P 8022 client.py u0_a385@192.168.1.176:~/.
-    # scp -P 8022 client.py u0_a212@192.168.1.168:~/.
+    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram, norxx, timearr, arrindy
 
     print("Starting Receive Thread:")
     while True:
@@ -119,25 +106,27 @@ def revMsg():
             )
 
         elif msg_type == 7:  # Single Ping response
-            print(
-                f"{datetime.now()} - ping received:  { (time.time() - tmpTime)}"
-            )
-            device.loop()
-            if device.is_connected():
-                device.send_state(
-                    {
-                        "epoch": time.time(),
-                        "resp_time": (time.time() - tmpTime),
-                        "cellband": sys.argv[1],
-                    }
-                )
-                counter+=1
-                if counter == 10:
-                    endprogram = True
-                norxx=False
-            else:
-                print(f"{datetime.now()} - error Type!", str(data))
-            cmd_state = 4  # Get User Input for next action
+            timearr[counter] = (time.time() - tmpTime)
+            #print(
+            #    f"{datetime.now()} - ping received:  { (time.time() - tmpTime)}"
+            #)
+            #device.loop()
+            #if device.is_connected():
+            #    device.send_state(
+            #        {
+            #            "epoch": time.time(),
+            #            "resp_time": (time.time() - tmpTime),
+            #            "cellband": sys.argv[1],
+            #        }
+            #    )
+            counter+=1
+            if counter == 10:
+                endprogram = True
+            norxx=False
+
+            #else:
+            #    print(f"{datetime.now()} - error Type!", str(data))
+            #cmd_state = 4  # Get User Input for next action
 
         elif msg_type == 8:
             if validation_msg == msg_arg1:
@@ -254,4 +243,32 @@ while True:
     #     print("exit!")
     #     break
 udpSerSock.close()
-{"mode":"full","isActive":false}
+
+
+# Construct device
+device = Device(
+    device_id,
+    "236e0f54-4074-4850-b5a0-20052c8a9601",
+    "f8bf01ed21898b61a597545dfe9de4beb6c374dd0c91f2bba196298cdfc2352a",
+)
+
+# Listen for commands.
+device.add_event_observer("command", on_command)
+
+# Connect to Losant.
+device.connect(blocking=False)
+# scp -P 8022 client.py u0_a385@192.168.1.176:~/.
+# scp -P 8022 client.py u0_a212@192.168.1.168:~/.
+
+indy=0
+while indy<=10:
+    device.loop()
+    if device.is_connected():
+        device.send_state(
+            {
+                "resp_time": timearr[indy],
+                "cellband": sys.argv[1],
+            }
+        )
+    time.sleep(1)
+#{"mode":"full","isActive":false}

@@ -282,6 +282,7 @@ while True:
                                     "resp_time": timearr[indy],
                                     "cellband": sys.argv[1],
                                     "jitter": float(jitter),
+                                    "location": sys.argv[2],
                                 }
                             )
                         else:
@@ -291,6 +292,7 @@ while True:
                                     "resp_time": timearr[indy],
                                     "cellband": sys.argv[1],
                                     "jitter": 0,
+                                    "location": sys.argv[2],
                                 }
                             )
                     indy+=1

@@ -127,7 +127,7 @@ def revMsg():
                     {
                         "epoch": time.time(),
                         "resp_time": (time.time() - tmpTime),
-                        "cellband": sys.argv[2],
+                        "cellband": sys.argv[1],
                     }
                 )
                 counter+=1

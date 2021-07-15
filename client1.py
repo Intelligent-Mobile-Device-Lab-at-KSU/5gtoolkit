@@ -253,6 +253,7 @@ while True:
                     if device.is_connected():
                         device.send_state(
                             {
+                                "epoch": time.time(),
                                 "resp_time": timearr[indy],
                                 "cellband": sys.argv[1],
                             }

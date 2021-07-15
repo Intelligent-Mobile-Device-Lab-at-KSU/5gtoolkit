@@ -235,10 +235,14 @@ while True:
                 )
                 print("attempt")
                 waitcount=0
-                while norxx or waitcount<=5:
+                itsbad=False
+                while norxx:
+                    if waitcount>5:
+                        itsbad=True
+                        break
                     waitcount+=1
                     time.sleep(.1)
-                if not norxx:
+                if itsbad==False:
                     break
                 print("Trying again...")
             norxx=True

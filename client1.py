@@ -232,6 +232,7 @@ while True:
                 ("%d|%s|%s" % (6, f"{time.time()}", " ")).encode(),
                 (peer_ip, int(peer_port)),
             )
+            print("sent")
             while norxx:
                 time.sleep(.1)
             norxx=True

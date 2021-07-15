@@ -49,7 +49,8 @@ def revMsg():
             rc += 1
             # print('[peer msg]:%s'% msg_arg1)
         elif int(msg_type) == 13:
-            elapsed = (time.time() - ttime) - 1
+            elapsed = (time.time() - ttime) - .1
+            print('Im done!')
         else:
             print('[error Type!]', str(data))
 
@@ -113,12 +114,12 @@ while True:
 
 ttime = time.time()
 if sys.argv[1] == "tx":
-    time.sleep(1)
+    time.sleep(.1)
     # comd = input("Ready to begin?>>")
     while (time.time()-ttime)<=10:
         udpSerSock.sendto(str.encode('%d|%s|%s' % (5, str('0'), " ")), (peer_ip, int(peer_port)))
         tc += 1
-        
+    print('Im done!')
     while True:
         udpSerSock.sendto(str.encode('%d|%s|%s' % (13, str('0'), " ")), (peer_ip, int(peer_port)))
         time.sleep(.1)

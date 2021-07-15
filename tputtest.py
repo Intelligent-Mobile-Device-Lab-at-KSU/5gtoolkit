@@ -115,10 +115,10 @@ ttime = time.time()
 if sys.argv[1] == "tx":
     time.sleep(1)
     # comd = input("Ready to begin?>>")
-    while True:
-        if (time.time()-ttime)<=10:
-            udpSerSock.sendto(str.encode('%d|%s|%s' % (5, str('0'), " ")), (peer_ip, int(peer_port)))
-            tc += 1
+    while (time.time()-ttime)<=10:
+        udpSerSock.sendto(str.encode('%d|%s|%s' % (5, str('0'), " ")), (peer_ip, int(peer_port)))
+        tc += 1
+        
     while True:
         udpSerSock.sendto(str.encode('%d|%s|%s' % (13, str('0'), " ")), (peer_ip, int(peer_port)))
         time.sleep(.1)

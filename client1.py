@@ -120,7 +120,8 @@ def revMsg():
             #        }
             #    )
             counter+=1
-            if counter == 10:
+            if counter == 9:
+                cmd_state=10
                 endprogram = True
             norxx=False
 

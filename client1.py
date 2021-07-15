@@ -231,6 +231,34 @@ while True:
                 time.sleep(.1)
             norxx=True
             if endprogram:
+                print('Logging to losant')
+                # Construct device
+                device = Device(
+                    device_id,
+                    "236e0f54-4074-4850-b5a0-20052c8a9601",
+                    "f8bf01ed21898b61a597545dfe9de4beb6c374dd0c91f2bba196298cdfc2352a",
+                )
+
+                # Listen for commands.
+                device.add_event_observer("command", on_command)
+
+                # Connect to Losant.
+                device.connect(blocking=False)
+                # scp -P 8022 client.py u0_a385@192.168.1.176:~/.
+                # scp -P 8022 client.py u0_a212@192.168.1.168:~/.
+
+                indy=0
+                while indy<=10:
+                    device.loop()
+                    if device.is_connected():
+                        device.send_state(
+                            {
+                                "resp_time": timearr[indy],
+                                "cellband": sys.argv[1],
+                            }
+                        )
+                    time.sleep(1)
+                #{"mode":"full","isActive":false}
                 print('done')
                 break
             #time.sleep(1)
@@ -244,32 +272,3 @@ while True:
     #     print("exit!")
     #     break
 udpSerSock.close()
-
-
-# Construct device
-device = Device(
-    device_id,
-    "236e0f54-4074-4850-b5a0-20052c8a9601",
-    "f8bf01ed21898b61a597545dfe9de4beb6c374dd0c91f2bba196298cdfc2352a",
-)
-
-# Listen for commands.
-device.add_event_observer("command", on_command)
-
-# Connect to Losant.
-device.connect(blocking=False)
-# scp -P 8022 client.py u0_a385@192.168.1.176:~/.
-# scp -P 8022 client.py u0_a212@192.168.1.168:~/.
-
-indy=0
-while indy<=10:
-    device.loop()
-    if device.is_connected():
-        device.send_state(
-            {
-                "resp_time": timearr[indy],
-                "cellband": sys.argv[1],
-            }
-        )
-    time.sleep(1)
-#{"mode":"full","isActive":false}

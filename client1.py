@@ -237,7 +237,7 @@ while True:
                 waitcount=0
                 itsbad=False
                 while norxx:
-                    if waitcount>5:
+                    if waitcount>50:
                         itsbad=True
                         break
                     waitcount+=1

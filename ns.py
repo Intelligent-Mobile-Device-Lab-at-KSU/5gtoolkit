@@ -34,12 +34,13 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 if (int(sys.argv[3])==0):
-    print('Sounding...')
+    print('Sounding Non-Stop...')
     while True:
         udpSerSock.sendto(str.encode("0"), server_addr)
         tx+=len(str.encode("0"))
         time.sleep(.1)
 else:
+    print('Sounding for 10 seconds!')
     stime = time.time();
     while (time.time()-stime) <=10:
         udpSerSock.sendto(str.encode("0"), server_addr)

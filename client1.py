@@ -3,6 +3,7 @@ import threading
 import time
 from datetime import datetime
 import time
+import sys
 
 from losantmqtt import Device
 
@@ -32,7 +33,8 @@ self_port = ""
 host_name = "client1"
 peer_name = "client2"
 validation_msg = ""
-
+counter=0
+endprogram=False
 
 def heartbeat():
     tmp_str = ("%d|%s|%s" % (9, "keep ", "live")).encode()
@@ -42,7 +44,7 @@ def heartbeat():
 
 
 def revMsg():
-    global peer_ip, peer_port, cmd_state, get_peer_counter
+    global peer_ip, peer_port, cmd_state, get_peer_counter, counter, endprogram
 
     # Construct device
     device = Device(
@@ -125,10 +127,14 @@ def revMsg():
                     {
                         "epoch": time.time(),
                         "resp_time": (time.time() - tmpTime),
+                        "cellband": sys.argv[2],
                     }
                 )
+                counter+=1
             else:
                 print(f"{datetime.now()} - error Type!", str(data))
+            if counter==10:
+                endprogram=True
             cmd_state = 4  # Get User Input for next action
 
         elif msg_type == 8:
@@ -167,6 +173,9 @@ host_name = "Noname"
 # Execute the 0, 1, 2, 3 commands in turn to complete the p2p connection and chat directly
 print(f"Press [Enter] to accept defaults.")
 while True:
+    if endprogram:
+        print('done')
+        break
     # comd = input("Commend[0,1,2,3,4]>>")
     # query online host
     strip_cmd = str(cmd_state)
@@ -221,7 +230,7 @@ while True:
 
     elif strip_cmd == "6":
         print(
-            f"{datetime.now()} - Sending constant pings every 10 sec.  Use CTRL-C to stop"
+            f"{datetime.now()} - Sending constant pings every 1 sec for 10 seconds.  Use CTRL-C to stop"
         )
         while True:
             tmpTime = time.time()
@@ -229,7 +238,7 @@ while True:
                 ("%d|%s|%s" % (6, f"{time.time()}", " ")).encode(),
                 (peer_ip, int(peer_port)),
             )
-            time.sleep(10)
+            time.sleep(1)
 
     elif strip_cmd == "10":
         print(f"{datetime.now()} - Exiting application")
@@ -240,3 +249,4 @@ while True:
     #     print("exit!")
     #     break
 udpSerSock.close()
+{"mode":"full","isActive":false}

@@ -33,7 +33,7 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-if (int(sys.argv[2])==0):
+if (int(sys.argv[3])==0):
     print('Sounding...')
     while True:
         udpSerSock.sendto(str.encode("0"), server_addr)

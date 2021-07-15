@@ -227,15 +227,22 @@ while True:
             f"{datetime.now()} - Sending constant as fast as possible 10 pings.  Use CTRL-C to stop"
         )
         while True:
-            tmpTime = time.time()
-            udpSerSock.sendto(
-                ("%d|%s|%s" % (6, f"{time.time()}", " ")).encode(),
-                (peer_ip, int(peer_port)),
-            )
-            print("sent")
-            while norxx:
-                time.sleep(.1)
+            while True:
+                tmpTime = time.time()
+                udpSerSock.sendto(
+                    ("%d|%s|%s" % (6, f"{time.time()}", " ")).encode(),
+                    (peer_ip, int(peer_port)),
+                )
+                print("attempt")
+                waitcount=0
+                while norxx or waitcount<=5:
+                    waitcount+=1
+                    time.sleep(.1)
+                if not norxx:
+                    break
+                print("Trying again...")
             norxx=True
+            print("Success!")
             if endprogram:
                 print('Getting Jitter...')
                 udpSerSock.sendto(

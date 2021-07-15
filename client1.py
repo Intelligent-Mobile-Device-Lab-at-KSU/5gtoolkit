@@ -238,7 +238,7 @@ while True:
                 ("%d|%s|%s" % (6, f"{time.time()}", " ")).encode(),
                 (peer_ip, int(peer_port)),
             )
-            time.sleep(1)
+            #time.sleep(1)
 
     elif strip_cmd == "10":
         print(f"{datetime.now()} - Exiting application")

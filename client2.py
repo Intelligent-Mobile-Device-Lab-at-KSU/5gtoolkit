@@ -105,6 +105,7 @@ def revMsg():
             mysum=0
             while indy<=8:
                 mysum+=(epocharray[indy+1]-epocharray[indy])
+                indy+=1
             jitter=mysum/9
             udpSerSock.sendto(
                 ("%d|%s|%s" % (13, str(jitter), str(jitter))).encode(),

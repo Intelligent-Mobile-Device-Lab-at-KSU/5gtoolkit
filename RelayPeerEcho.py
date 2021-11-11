@@ -61,6 +61,7 @@ while ("PEER" not in respFromServer):
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 
+udpClientSock.sendto(str.encode("OK"), server_addr)
 print("Peer found. Echo system ready")
 
 if username == 'a':

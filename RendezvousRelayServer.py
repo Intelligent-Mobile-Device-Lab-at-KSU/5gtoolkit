@@ -99,7 +99,7 @@ while True:
 
     if not peersNotified and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         respFromA = ''
-        while "OK" not in respFromB:
+        while "OK" not in respFromA:
             udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
             udpServerSock.settimeout(10)
             try:

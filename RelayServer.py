@@ -58,8 +58,8 @@ def UDPServerSocket_halt_listener():
     while True:
         bytesAddressPair = UDPServerSocket_halt.recvfrom(1024)
         message = bytesAddressPair[0]
-        if message == "0":
-            UDPServerSocket_halt.sendto("1",bytesAddressPair[1])
+        if message.decode() == "0":
+            UDPServerSocket_halt.sendto(str("1").encode(),bytesAddressPair[1])
             noHalt = not noHalt
         time.sleep(.0001)
 

@@ -98,29 +98,27 @@ while True:
         udpServerSock.sendto(str("OK").encode(), client_addr)
 
     if not peersNotified and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
-        udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'],peers['a']['port']))
-        udpServerSock.settimeout(10)
-        try:
-            data = udpServerSock.recvfrom(1024)
-        except:
-            resetPeerList()
-            udpServerSock.settimeout(None)
-            continue
-        udpServerSock.settimeout(None)
-
-        if data[0].decode() == "OK":
-            udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
+        respFromA = ''
+        while "OK" not in respFromB:
+            udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
             udpServerSock.settimeout(10)
             try:
                 data = udpServerSock.recvfrom(1024)
             except:
-                resetPeerList()
-                udpServerSock.settimeout(None)
                 continue
 
+        udpServerSock.settimeout(None)
+        if data[0].decode() == "OK":
+            respFromB = ''
+            while "OK" not in respFromB:
+                udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
+                udpServerSock.settimeout(10)
+                try:
+                    data = udpServerSock.recvfrom(1024)
+                except:
+                    continue
+
             udpServerSock.settimeout(None)
-            if data[0].decode() == "OK":
-                peersNotified = True
-                print(peers)
-                th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
-                th_keepalive.start()
+            peersNotified = True
+            th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
+            th_keepalive.start()

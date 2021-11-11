@@ -75,8 +75,17 @@ def UDPkeepalive():
 
 peersNotified = False
 while True:
+
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
+
+    if data_ctrl_msg[0] == "done":
+        if client_addr[0] == peers['a']['ip']:
+            udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
+        elif client_addr[1] == peers['b']['ip']:
+            udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['a']['port']))
+        resetPeerList()
+
     # Begin Relay
     if peersNotified:
         if client_addr[0] == peers['a']['ip']:

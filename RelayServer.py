@@ -98,7 +98,7 @@ while True:
             respFromUploader = respFromUploader[0].decode()
             totalBytesRecvd += len(respFromUploader)
 
-        udpServerSock.settimeout()
+        udpServerSock.settimeout(None)
         print("UGR getting stats...")
         if not noHalt:
             print("Halted by client.")
@@ -129,7 +129,7 @@ while True:
             epochs.append(time.time())
             respFromUploader = respFromUploader[0].decode()
 
-        udpServerSock.settimeout()
+        udpServerSock.settimeout(None)
         print("JU getting stats...")
         if not noHalt:
             print("Halted by client.")

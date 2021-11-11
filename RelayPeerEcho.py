@@ -1,122 +1,124 @@
-# RendezvousRelayServer.py
+# RelayPeerEcho.py
 # Billy Kihei (c) 2021
 # Intelligent Mobile Device Lab @ Kennesaw State University
 # Part of the 5Gtoolkit for testing commercial 5G networks.
 
-# This app receives control messages from clients, establishes peering session and performs the request.
-# a. RendezvousRelayServer:
-#       Client A Sends: login, the RendezvousRelayServer will save the remote IP and port of the client A.
-#       Client B sends: login, the RendezvousRelayServer will save the remote IP and port of the client B.
-#       RendezvousRelayServer simply forwards the
+# This app measures the Layer 7 delay to send the character '0' to a peer via a RendezvousRelayServer.
+# The purpose of this app is to measure the Layer 7 round trip time from this phone to the other phone via RendezvousRelayServer.
+# A->RendezvousRelayServer->B->RendezvousRelayServer->A
 
-# The purpose of this app is to measure the Layer 7 peer-to-peer delay from A<->RendezvousRelayServer<->B.
+# The intended use is to run this app in Termux.
+# Provide the number of times you would like to run this application.
+# Statistics will be returned to you.
 
-# The intended use is to run this app on a server.
-
-# 1. Log into your server.
+# 1. Open Termux.
 # 2. Download the 5gtoolkit git repo.
-# 3. Edit the config.json file so that RendezvousRelayServer ip and port are what you desire.
-# 4. python3 RendezvousRelayServer.py
+# 3. Edit the config.json file so that echo server ip and port are correct.
+# 4. python RelayPeerEcho.py <a|b> <number of measurements>
+# 5. Example: python RelayPeerEcho.py a 10, means: login as user 'a', get 10 echoes from 'b'
+# 6. Example: python RelayPeerEcho.py b 10, means: login as user 'b', get 10 echoes from 'a'
 
 import socket
 import sys
 import signal
-import json
-import threading
 import time
-
+import json
 f = open('config.json',)
 conf = json.load(f)
 f.close()
 
-peers = {
-    'a': {
-        'ip': '',
-        'port': 0
-    },
-    'b': {
-        'ip': '',
-        'port': 0
-    }
-}
+username = sys.argv[1] # can only be a or b
+NumTimesToRun = int(sys.argv[2])
 
-
-def resetPeerList():
-    peersNotified = False
-    peers = {
-        'a': {
-            'ip': '',
-            'port': 0
-        },
-        'b': {
-            'ip': '',
-            'port': 0
-        }
-    }
-    print('Logged all users out.')
-    print("Peer Relay Server listening on " + server_addr[0] + ":" + str(server_addr[1]))
-
+pktnumber = 0
 
 server_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_server"]["port"])
-server_halt_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_server"]["halt_port"])
 
-udpServerSock= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-udpServerSock.bind(server_addr)
-print("Peer Relay Server listening on " + server_addr[0] + ":" + str(server_addr[1]))
+udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
 
 def signal_handler(sig, frame):
-    udpServerSock.close()
+    udpClientSock.sendto(str.encode("done:a"), server_addr)
+    udpClientSock.close()
     print('\n')
+    print("%d bytes echoed!\n" % (pktnumber))
     sys.exit(0)
+
 
 signal.signal(signal.SIGINT, signal_handler)
 
-keepthreadalive = True
-def UDPkeepalive():
-    global keepthreadalive
-    while keepthreadalive:
-        udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
-        udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
-        time.sleep(10)
 
-th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
+print('Logging In To Rendezvous Relay Server...')
+respFromServer=''
+while ("OK" not in respFromServer):
+    udpClientSock.sendto(str.encode("login:" + username), server_addr)
+    time.sleep(.5)
+    respFromServer = udpClientSock.recvfrom(1024)
+    respFromServer = respFromServer[0].decode()
+    time.sleep(.5)
 
-peersNotified = False
-while True:
-    data, client_addr = udpServerSock.recvfrom(1024)
-    data_ctrl_msg = data.decode().split(":")
-    print(data.decode())
-    # User a is done.
-    if data_ctrl_msg[0] == "done":
-        udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
-        keepthreadalive = False
-        resetPeerList()
-        continue
+respFromServer=''
+print('Logged in as: '+username+ ", awaiting peer...")
+while ("PEER" not in respFromServer):
+    respFromServer = udpClientSock.recvfrom(1024)
+    respFromServer = respFromServer[0].decode()
 
-    # Begin Relay
-    if peersNotified:
-        if client_addr[0] == peers['a']['ip']:
-            udpServerSock.sendto(data, (peers['b']['ip'], peers['b']['port']))
-        elif client_addr[0] == peers['b']['ip']:
-            udpServerSock.sendto(data, (peers['a']['ip'], peers['a']['port']))
+for i in range(3):
+    udpClientSock.sendto(str.encode("OK"), server_addr)
+    time.sleep(.5)
+
+print("Peer found. Echo system ready")
+
+if username == 'a':
+    x=input("Press any key to begin echo...")
+    while True:
+        print('Sending Packets')
+        pktnumber = 0
+        delays = []
+        while (pktnumber < NumTimesToRun):
+            udpClientSock.sendto(str.encode("0"), server_addr)
+            t = time.time()
+            data = udpClientSock.recvfrom(1024)
+            if data[0].decode()=="keep-alive":
+                continue
+            elapsed = time.time() - t
+            delays.append(elapsed)
+            pktnumber += 1
+
+        if len(delays) == 0:
+            print("Divide by zero error. Maybe decrease the packet size? Try again.")
+        else:
+            mu = sum(delays) / len(delays)
+            variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+            stddev = variance ** 0.5
+            multiplied_delays = [element * 1000 for element in delays]
+            themin = min(multiplied_delays)
+            themax = max(multiplied_delays)
+
+            print("Peer Relay completed %s measurements" % (pktnumber))
+            print("Average: " + str(mu*1000) + "ms")
+            print("Std.Dev: " + str(stddev*1000) + "ms")
+            print("Min: " + str(themin) + "ms")
+            print("Max: " + str(themax) + "ms")
+            print('\n')
+            x=input("Run again? (y/n)")
+            if x=="n":
+                udpClientSock.sendto(str.encode("done:a"), server_addr)
+                udpClientSock.close()
+                break
+            elif x=="y":
+                continue
+
+elif username == 'b':
+    x=input("Press any key to receiving packets...")
+    print('Listening for packets...')
+    while True:
+        data, client_addr = udpClientSock.recvfrom(1024)
+        if data.decode() == "done":
+            udpClientSock.close()
+            break
+        elif data.decode() == "keep-alive":
             continue
-
-    if data_ctrl_msg[0] == "login":
-        if data_ctrl_msg[1] == "a":
-            peers['a']['ip']=client_addr[0]
-            peers['a']['port'] = client_addr[1]
-        elif data_ctrl_msg[1] == "b":
-            peers['b']['ip'] = client_addr[0]
-            peers['b']['port'] = client_addr[1]
-
-        for i in range(3):
-            udpServerSock.sendto(str("OK").encode(), client_addr)
-            time.sleep(.5)
-
-    if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
-        print(peers)
-        udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
-        udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
-        peersNotified = True
-        print("Peers Notified, echo service ready.")
-        th_keepalive.start()
+        else:
+            udpClientSock.sendto(data, client_addr)
+            pktnumber += 1

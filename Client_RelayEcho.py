@@ -12,7 +12,7 @@
 
 # 1. Open Termux.
 # 2. Download the 5gtoolkit git repo.
-# 3. Edit the config.json file so that server ip and port are correct.
+# 3. Edit the config.json file so that echo server ip and port are correct.
 # 4. python Client_RelayEcho.py <number of measurements>
 
 import socket
@@ -51,14 +51,19 @@ while (pktnumber < NumTimesToRun):
     pktnumber += 1
 
 udpClientSock.close()
-mu = sum(delays) / len(delays)
-variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
-stddev = variance ** 0.5
 
-print("Completed %s measurements" % (pktnumber))
-print("Average: " + str(mu*1000) + "ms")
-print("Std.Dev: " + str(stddev*1000) + "ms")
+if len(delays) == 0:
+    print("Divide by zero error. Maybe decrease the packet size? Try again.")
+else:
+    mu = sum(delays) / len(delays)
+    variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+    stddev = variance ** 0.5
+    multiplied_delays = [element * 1000 for element in delays]
+    themin = min(multiplied_delays)
+    themax = max(multiplied_delays)
 
-multiplied_delays = [element * 1000 for element in delays]
-print("Min: " + str(min(multiplied_delays)) + "ms")
-print("Max: " + str(max(multiplied_delays)) + "ms")
+    print("Completed %s measurements" % (pktnumber))
+    print("Average: " + str(mu*1000) + "ms")
+    print("Std.Dev: " + str(stddev*1000) + "ms")
+    print("Min: " + str(themin) + "ms")
+    print("Max: " + str(themax) + "ms")

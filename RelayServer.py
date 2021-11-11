@@ -48,7 +48,6 @@ while True:
         pktnumber = 0
         pktSize = int(data_ctrl_msg[1])
         duration = int(data_ctrl_msg[2])
-        elapsed = 0
         t = time.time()
         while (time.time() - t) <= duration:
             s = ''.join(random.choice(string.digits) for _ in range(pktSize))
@@ -56,5 +55,25 @@ while True:
             pktnumber += 1
         o = "done:"+str(pktnumber)
         udpServerSock.sendto(o.encode(), client_addr)
-        print("Done.")
+        print("GDR done.")
+        print("Listening...")
+    if data_ctrl_msg[0]=="UGR":
+        print("Initiating UGR...")
+        packetSizeInBytes = int(data_ctrl_msg[1])
+        udpServerSock.sendto(str.encode("OK"), client_addr)
+        respFromUploader = ''
+        totalBytesRecvd = 0
+        while "done" not in respFromUploader:
+            respFromUploader = udpServerSock.recvfrom(packetSizeInBytes)
+            respFromUploader = respFromUploader[0].decode()
+            totalBytesRecvd += len(respFromUploader)
+
+        numberOfPackets = totalBytesRecvd / packetSizeInBytes
+        ojson = {
+            "totalBytesRecvd" : totalBytesRecvd,
+            "numberOfPackets" : numberOfPackets
+        }
+
+        udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
+        print("UGR done.")
         print("Listening...")

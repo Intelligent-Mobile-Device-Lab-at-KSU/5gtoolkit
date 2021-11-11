@@ -45,6 +45,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 noHalt = True
 server_halt_addr = (conf["relay_server"]["ip"], conf["relay_server"]["halt_port"])
+
 # Create a datagram socket
 UDPServerSocket_halt = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 UDPServerSocket_halt.bind(server_halt_addr)
@@ -52,7 +53,7 @@ UDPServerSocket_halt.bind(server_halt_addr)
 
 # This function is called in a separate thread for listening
 # for any halt commands sent from the phone in case the Server gets caught in a while loop.
-def UDPServerSocket_halt():
+def UDPServerSocket_halt_listener():
     global noHalt
     while True:
         bytesAddressPair = UDPServerSocket_halt.recvfrom(1024)
@@ -64,7 +65,7 @@ def UDPServerSocket_halt():
 
 
 # Set up thread for UDP Server (phone is pushing as client to RPI)
-th_halt_udp = threading.Thread(name='UDPServerSocket_halt', target=UDPServerSocket_halt, args=())
+th_halt_udp = threading.Thread(name='UDPServerSocket_halt_listener', target=UDPServerSocket_halt_listener, args=())
 th_halt_udp.start()
 
 while True:

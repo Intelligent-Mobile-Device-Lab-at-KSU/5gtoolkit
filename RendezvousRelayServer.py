@@ -52,6 +52,7 @@ def resetPeerList():
             'port': 0
         }
     }
+    print('Logged all users out.')
 
 server_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_server"]["port"])
 server_halt_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_server"]["halt_port"])
@@ -67,11 +68,14 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
+
 def UDPkeepalive():
     while True:
         udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
         udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
         time.sleep(10)
+
+th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
 
 peersNotified = False
 while True:
@@ -84,6 +88,8 @@ while True:
             udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
         elif client_addr[1] == peers['b']['ip']:
             udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['a']['port']))
+        if th_keepalive.is_alive():
+            th_keepalive.join()
         resetPeerList()
 
     # Begin Relay
@@ -112,5 +118,4 @@ while True:
         udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
         peersNotified = True
         print("Peers Notified, echo service ready.")
-        th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
         th_keepalive.start()

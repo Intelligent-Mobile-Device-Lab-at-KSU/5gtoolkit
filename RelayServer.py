@@ -107,7 +107,6 @@ while True:
         if not noHalt:
             print("Halted by client.")
             print("Listening...")
-            noHalt = not noHalt
             continue
 
         numberOfPackets = totalBytesRecvd / packetSizeInBytes
@@ -142,7 +141,6 @@ while True:
         if not noHalt:
             print("Halted by client.")
             print("Listening...")
-            noHalt = not noHalt
             continue
 
         # Calculate Jitter

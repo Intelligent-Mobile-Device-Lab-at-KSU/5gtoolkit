@@ -85,7 +85,6 @@ while True:
             continue
     else:
         resetPeerList()
-        continue
 
     if data_ctrl_msg[0] == "login":
         if data_ctrl_msg[1] == "a":

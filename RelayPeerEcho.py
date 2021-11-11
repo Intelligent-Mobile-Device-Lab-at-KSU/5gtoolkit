@@ -41,6 +41,7 @@ udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 def signal_handler(sig, frame):
     udpClientSock.close()
     print('\n')
+    print("%d bytes echoed!\n" % (pktnumber))
     sys.exit(0)
 
 
@@ -63,29 +64,37 @@ while ("PEER" not in respFromServer):
 print("Peer found. Delaying 5 seconds...")
 time.sleep(5)
 
-print('Sending Packets')
-while (pktnumber < NumTimesToRun):
-    udpClientSock.sendto(str.encode("0"), server_addr)
-    t = time.time()
-    data = udpClientSock.recvfrom(1024)
-    elapsed = time.time() - t
-    delays.append(elapsed)
-    pktnumber += 1
+if username == 'a':
+    print('Sending Packets')
+    while (pktnumber < NumTimesToRun):
+        udpClientSock.sendto(str.encode("0"), server_addr)
+        t = time.time()
+        data = udpClientSock.recvfrom(1024)
+        elapsed = time.time() - t
+        delays.append(elapsed)
+        pktnumber += 1
 
-udpClientSock.close()
+    udpClientSock.close()
 
-if len(delays) == 0:
-    print("Divide by zero error. Maybe decrease the packet size? Try again.")
-else:
-    mu = sum(delays) / len(delays)
-    variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
-    stddev = variance ** 0.5
-    multiplied_delays = [element * 1000 for element in delays]
-    themin = min(multiplied_delays)
-    themax = max(multiplied_delays)
+    if len(delays) == 0:
+        print("Divide by zero error. Maybe decrease the packet size? Try again.")
+    else:
+        mu = sum(delays) / len(delays)
+        variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+        stddev = variance ** 0.5
+        multiplied_delays = [element * 1000 for element in delays]
+        themin = min(multiplied_delays)
+        themax = max(multiplied_delays)
 
-    print("Peer Relay completed %s measurements" % (pktnumber))
-    print("Average: " + str(mu*1000) + "ms")
-    print("Std.Dev: " + str(stddev*1000) + "ms")
-    print("Min: " + str(themin) + "ms")
-    print("Max: " + str(themax) + "ms")
+        print("Peer Relay completed %s measurements" % (pktnumber))
+        print("Average: " + str(mu*1000) + "ms")
+        print("Std.Dev: " + str(stddev*1000) + "ms")
+        print("Min: " + str(themin) + "ms")
+        print("Max: " + str(themax) + "ms")
+
+elif username == 'b':
+    print('Listening for packets...')
+    while True:
+        data, client_addr = udpClientSock.recvfrom(1)
+        udpClientSock.sendto(data, client_addr)
+        pktnumber += 1

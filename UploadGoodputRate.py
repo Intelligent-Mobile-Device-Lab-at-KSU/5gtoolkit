@@ -37,14 +37,21 @@ durationOfTestInSeconds = int(durationOfTestInSeconds_String)
 totalBytesSent = 0
 
 server_addr = (conf["relay_server"]["ip"], conf["relay_server"]["port"])
+server_halt_addr = (conf["relay_server"]["ip"], conf["relay_server"]["halt_port"])
 
 udpClientSock= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def signal_handler(sig, frame):
-    udpClientSock.close()
-    print('\n')
-    print("%d bytes sent!\n" % (totalBytesSent))
-    sys.exit(0)
+    udpClientSock.sendto(str("0").encode(), server_halt_addr)
+    data = udpClientSock.recvfrom(1024)
+    if data[0].decode() == "1":
+        udpClientSock.close()
+        print('\n')
+        sys.exit(0)
+    else:
+        udpClientSock.close()
+        print('ERROR Could Not Stop Server \n')
+        sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 

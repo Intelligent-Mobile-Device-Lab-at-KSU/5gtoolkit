@@ -52,8 +52,10 @@ print('Logging In To Rendezvous Relay Server...')
 respFromServer=''
 while ("OK" not in respFromServer):
     udpClientSock.sendto(str.encode("login:" + username), server_addr)
+    time.sleep(.5)
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
+    time.sleep(.5)
 
 respFromServer=''
 print('Logged in as: '+username+ ", awaiting peer...")

@@ -53,6 +53,7 @@ def resetPeerList():
         }
     }
     print('Logged all users out.')
+    print("Peer Relay Server listening on " + server_addr[0] + ":" + str(server_addr[1]))
 
 server_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_server"]["port"])
 server_halt_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_server"]["halt_port"])
@@ -79,16 +80,12 @@ th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=()
 
 peersNotified = False
 while True:
-
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
 
     # User a is done.
     if data_ctrl_msg[0] == "done":
-        if client_addr[0] == peers['a']['ip']:
-            udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
-        elif client_addr[1] == peers['b']['ip']:
-            udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['a']['port']))
+        udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
         if th_keepalive.is_alive():
             th_keepalive.join()
         resetPeerList()

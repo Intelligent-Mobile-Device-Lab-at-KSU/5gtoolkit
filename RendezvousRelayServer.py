@@ -106,6 +106,7 @@ while True:
             resetPeerList()
             udpServerSock.settimeout(None)
             continue
+        udpServerSock.settimeout(None)
 
         if data[0].decode() == "OK":
             udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
@@ -116,7 +117,10 @@ while True:
                 resetPeerList()
                 udpServerSock.settimeout(None)
                 continue
+
+            udpServerSock.settimeout(None)
             if data[0].decode() == "OK":
                 peersNotified = True
+                print(peers)
                 th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
                 th_keepalive.start()

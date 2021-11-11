@@ -43,8 +43,8 @@ signal.signal(signal.SIGINT, signal_handler)
 while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
-    if data_ctrl_msg[0]=="GDR":
-        print("Initiating GDR...")
+    if data_ctrl_msg[0]=="GDR" or data_ctrl_msg[0]=="DJ":
+        print("Initiating " + data_ctrl_msg[0] + "...")
         pktnumber = 0
         pktSize = int(data_ctrl_msg[1])
         duration = int(data_ctrl_msg[2])
@@ -55,7 +55,7 @@ while True:
             pktnumber += 1
         o = "done:"+str(pktnumber)
         udpServerSock.sendto(o.encode(), client_addr)
-        print("GDR done.")
+        print(data_ctrl_msg[0] + " done.")
         print("Listening...")
     if data_ctrl_msg[0]=="UGR":
         print("Initiating UGR...")

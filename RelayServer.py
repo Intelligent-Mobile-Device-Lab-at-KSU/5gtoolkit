@@ -60,9 +60,9 @@ while True:
     if data_ctrl_msg[0]=="UGR":
         print("Initiating UGR...")
         packetSizeInBytes = int(data_ctrl_msg[1])
-        udpServerSock.sendto(str.encode("OK"), client_addr)
         respFromUploader = ''
         totalBytesRecvd = 0
+        udpServerSock.sendto(str.encode("OK"), client_addr)
         while "done" not in respFromUploader:
             respFromUploader = udpServerSock.recvfrom(packetSizeInBytes)
             respFromUploader = respFromUploader[0].decode()

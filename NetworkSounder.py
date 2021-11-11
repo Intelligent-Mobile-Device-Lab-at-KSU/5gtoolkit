@@ -14,7 +14,7 @@
 # 2. Download the 5gtoolkit git repo.
 # 3. python NetworkSounder.py
 # 4. On Samsung Android phone (T-Mobile) type on phone keypad: *#0011#
-# 5. Look at the
+# 5. Look at the NR band the modem attaches to.
 
 import socket
 import sys

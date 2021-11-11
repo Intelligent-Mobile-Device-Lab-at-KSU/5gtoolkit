@@ -41,7 +41,7 @@ signal.signal(signal.SIGINT, signal_handler)
 
 while True:
     data, client_addr = udpServerSock.recvfrom(1024)
-    data_ctrl_msg = data.split(":")
+    data_ctrl_msg = data.decode().split(":")
     if data_ctrl_msg[0]=="GDR":
         print("Initiating GDR...")
         pktnumber = 0

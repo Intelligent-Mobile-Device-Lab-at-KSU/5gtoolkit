@@ -77,3 +77,38 @@ while True:
         udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
         print("UGR done.")
         print("Listening...")
+
+    if data_ctrl_msg[0]=="JU":
+        print("Initiating JU...")
+        packetSizeInBytes = int(data_ctrl_msg[1])
+        respFromUploader = ''
+        totalBytesRecvd = 0
+        epochs = []
+        udpServerSock.sendto(str.encode("OK"), client_addr)
+        while "done" not in respFromUploader:
+            respFromServer = udpServerSock.recvfrom(65507)
+            epochs.append(time.time())
+            respFromServer = respFromServer[0].decode()
+
+        # Calculate Jitter
+        i = 0
+        delays = []
+        L = len(epochs)
+        while i <= L - 2:
+            delays.append(epochs[i + 1] - epochs[i])
+            i += 1
+
+        mu = sum(delays) / len(delays)
+        variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+        stddev = variance ** 0.5
+        multiplied_delays = [element * 1000 for element in delays]
+
+        ojson = {
+            "avg": mu * 1000,
+            "stddev": stddev * 1000,
+            "min": min(multiplied_delays),
+            "max": max(multiplied_delays)
+        }
+        udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
+        print("JU done.")
+        print("Listening...")

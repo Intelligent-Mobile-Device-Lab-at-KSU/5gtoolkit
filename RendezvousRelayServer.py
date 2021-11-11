@@ -98,6 +98,7 @@ while True:
         udpServerSock.sendto(str("OK").encode(), client_addr)
 
     if not peersNotified and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
+        print(peers)
         respFromA = ''
         while "OK" not in respFromA:
             udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
@@ -120,5 +121,6 @@ while True:
 
             udpServerSock.settimeout(None)
             peersNotified = True
+            print("Peers Notified, echo service ready.")
             th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
             th_keepalive.start()

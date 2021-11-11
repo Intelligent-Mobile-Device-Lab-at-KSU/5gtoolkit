@@ -44,7 +44,7 @@ udpClientSock= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 def signal_handler(sig, frame):
     udpClientSock.sendto(str("0").encode(), server_halt_addr)
     data = udpClientSock.recvfrom(1024)
-    if data[0] == "1":
+    if data[0].decode() == "1":
         udpClientSock.close()
         print('\n')
         sys.exit(0)

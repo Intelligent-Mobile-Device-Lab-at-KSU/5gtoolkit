@@ -94,7 +94,11 @@ while True:
         udpServerSock.settimeout(3)
         udpServerSock.sendto(str.encode("OK"), client_addr)
         while ("done" not in respFromUploader) and noHalt:
-            respFromUploader = udpServerSock.recvfrom(packetSizeInBytes)
+            try:
+                respFromUploader = udpServerSock.recvfrom(packetSizeInBytes)
+            except:
+                noHalt = not noHalt
+                break
             respFromUploader = respFromUploader[0].decode()
             totalBytesRecvd += len(respFromUploader)
 
@@ -125,7 +129,11 @@ while True:
         udpServerSock.settimeout(3)
         udpServerSock.sendto(str.encode("OK"), client_addr)
         while ("done" not in respFromUploader) and noHalt:
-            respFromUploader = udpServerSock.recvfrom(65507)
+            try:
+                respFromUploader = udpServerSock.recvfrom(packetSizeInBytes)
+            except:
+                noHalt = not noHalt
+                break
             epochs.append(time.time())
             respFromUploader = respFromUploader[0].decode()
 

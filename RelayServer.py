@@ -47,7 +47,6 @@ while True:
         print("Initiating GDR...")
         pktnumber = 0
         pktSize = int(data_ctrl_msg[1])
-        print(pktSize)
         duration = int(data_ctrl_msg[2])
         elapsed = 0
         t = time.time()

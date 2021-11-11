@@ -38,6 +38,7 @@ udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 def signal_handler(sig, frame):
+    udpClientSock.sendto(str.encode("done:a"), server_addr)
     udpClientSock.close()
     print('\n')
     print("%d bytes echoed!\n" % (pktnumber))
@@ -48,9 +49,9 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 print('Logging In To Rendezvous Relay Server...')
-udpClientSock.sendto(str.encode("login:"+username), server_addr)
 respFromServer=''
 while ("OK" not in respFromServer):
+    udpClientSock.sendto(str.encode("login:" + username), server_addr)
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 
@@ -60,7 +61,10 @@ while ("PEER" not in respFromServer):
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 
-udpClientSock.sendto(str.encode("OK"), server_addr)
+for i in range(3):
+    udpClientSock.sendto(str.encode("OK"), server_addr)
+    time.sleep(.5)
+
 print("Peer found. Echo system ready")
 
 if username == 'a':
@@ -97,7 +101,7 @@ if username == 'a':
             print('\n')
             x=input("Run again? (y/n)")
             if x=="n":
-                udpClientSock.sendto(str.encode("done"), server_addr)
+                udpClientSock.sendto(str.encode("done:a"), server_addr)
                 udpClientSock.close()
                 break
             elif x=="y":

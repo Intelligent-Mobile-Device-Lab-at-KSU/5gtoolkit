@@ -99,28 +99,9 @@ while True:
 
     if not peersNotified and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         print(peers)
-        respFromA = ''
-        while "OK" not in respFromA:
-            udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
-            udpServerSock.settimeout(3)
-            try:
-                data = udpServerSock.recvfrom(1024)
-            except:
-                continue
-
-        print("A notified. Attempting B...")
-        udpServerSock.settimeout(None)
-        respFromB = ''
-        while "OK" not in respFromB:
-            udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
-            udpServerSock.settimeout(3)
-            try:
-                data = udpServerSock.recvfrom(1024)
-            except:
-                continue
-
-            udpServerSock.settimeout(None)
-            peersNotified = True
-            print("Peers Notified, echo service ready.")
-            th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
-            th_keepalive.start()
+        udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
+        udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
+        peersNotified = True
+        print("Peers Notified, echo service ready.")
+        th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
+        th_keepalive.start()

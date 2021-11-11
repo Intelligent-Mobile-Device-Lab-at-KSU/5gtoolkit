@@ -47,20 +47,25 @@ signal.signal(signal.SIGINT, signal_handler)
 
 print('Sending Request to Relay Server...')
 udpClientSock.sendto(str.encode("GDR:"+packetSizeInBytes_String+":"+durationOfTestInSeconds_String), server_addr)
-respFromServer = udpClientSock.recvfrom(1024)
+respFromServer = udpClientSock.recvfrom(65507)
 print('Server ready.')
+print('Measurement in progress...')
 while "done" not in respFromServer:
     respFromServer = udpClientSock.recvfrom(packetSizeInBytes)
+    respFromServer = respFromServer[0].decode()
     totalBytesRecvd += len(respFromServer)
 
-totalPacketsSent = respFromServer.split(":")[1]
-print("Last message from Server: " + respFromServer)
+print('Done.')
 udpClientSock.close()
+totalPacketsSent = int(respFromServer.split(":")[1])
+
 goodput = totalBytesRecvd/durationOfTestInSeconds
 numberOfPackets = totalBytesRecvd/packetSizeInBytes
 packetReceptionRate = (numberOfPackets/totalPacketsSent)*100
 
-print("Goodput (Megabitsps): %s " % ((goodput/8)/(1e6)))
+print("Server Sent: " + str(totalPacketsSent))
+print("Goodput (raw): %s bytes" % (goodput))
+print("Goodput (Megabitsps): %s " % ((goodput*8)/(1e6)))
 print("Goodput (MegaBytesps): %s " % ((goodput)/(1e6)))
 print("Number of Packets Received: " + str(numberOfPackets))
 print("Packet Reception Rate: " + str(packetReceptionRate) + "%")

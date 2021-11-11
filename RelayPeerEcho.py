@@ -107,7 +107,6 @@ elif username == 'b':
     print('Listening for packets...')
     while True:
         data, client_addr = udpClientSock.recvfrom(1024)
-
         if data.decode() == "done":
             udpClientSock.close()
             break

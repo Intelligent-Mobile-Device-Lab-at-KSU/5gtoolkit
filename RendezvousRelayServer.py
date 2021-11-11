@@ -109,9 +109,9 @@ while True:
             peers['b']['ip'] = client_addr[0]
             peers['b']['port'] = client_addr[1]
 
-        for i in range(3):
+        for i in range(100):
             udpServerSock.sendto(str("OK").encode(), client_addr)
-            time.sleep(.5)
+            time.sleep(.1)
 
     if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         print(peers)

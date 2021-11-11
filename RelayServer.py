@@ -86,9 +86,9 @@ while True:
         epochs = []
         udpServerSock.sendto(str.encode("OK"), client_addr)
         while "done" not in respFromUploader:
-            respFromServer = udpServerSock.recvfrom(65507)
+            respFromUploader = udpServerSock.recvfrom(65507)
             epochs.append(time.time())
-            respFromServer = respFromServer[0].decode()
+            respFromUploader = respFromUploader[0].decode()
 
         # Calculate Jitter
         i = 0

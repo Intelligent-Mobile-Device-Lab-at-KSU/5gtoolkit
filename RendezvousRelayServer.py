@@ -41,6 +41,7 @@ peers = {
 }
 
 def resetPeerList():
+    peersNotified = False
     peers = {
         'a': {
             'ip': '',
@@ -96,7 +97,7 @@ while True:
 
         udpServerSock.sendto(str("OK").encode(), client_addr)
 
-    if (peers['b']['port'] > 0) and (peers['a']['port'] > 0):
+    if not peersNotified and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'],peers['a']['port']))
         udpServerSock.settimeout(10)
         try:
@@ -105,6 +106,7 @@ while True:
             resetPeerList()
             udpServerSock.settimeout(None)
             continue
+
         if data.decode() == "OK":
             udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
             udpServerSock.settimeout(10)

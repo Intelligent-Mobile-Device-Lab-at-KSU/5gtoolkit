@@ -60,10 +60,12 @@ while (time.time() - t) <= durationOfTestInSeconds:
     udpClientSock.sendto(s.encode(), server_addr)
     totalPacketsSent += 1
 
+print("Done. Awaiting Stats From Relay Server...")
 udpClientSock.sendto(str.encode("done"), server_addr)
 respFromServer = udpClientSock.recvfrom(1024)
 stats = json.loads(respFromServer[0].decode())
 udpClientSock.close()
+print("Stats Received.")
 
 totalBytesRecvd = stats["totalBytesRecvd"]
 numberOfPackets = stats["numberOfPackets"]

@@ -67,18 +67,18 @@ while i <= L-2:
     delays.append(epochs[i+1]-epochs[i])
     i += 1
 
-mu = sum(delays) / len(delays)
-variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
-stddev = variance ** 0.5
+if len(delays) == 0:
+    print("Divide by zero error. Maybe decrease the packet size? Try again.")
+else:
+    mu = sum(delays) / len(delays)
+    variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+    stddev = variance ** 0.5
+    multiplied_delays = [element * 1000 for element in delays]
+    themin = min(multiplied_delays)
+    themax = max(multiplied_delays)
 
-mu = sum(delays) / len(delays)
-variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
-stddev = variance ** 0.5
-
-print("Server attempted to send %s packets" % (totalPacketsSent))
-print("Jitter average: " + str(mu*1000) + "ms")
-print("Jitter std.dev: " + str(stddev*1000) + "ms")
-
-multiplied_delays = [element * 1000 for element in delays]
-print("Jitter min: " + str(min(multiplied_delays)) + "ms")
-print("Jitter max: " + str(max(multiplied_delays)) + "ms")
+    print("Server attempted to send %s packets" % (totalPacketsSent))
+    print("Jitter average: " + str(mu*1000) + "ms")
+    print("Jitter std.dev: " + str(stddev*1000) + "ms")
+    print("Jitter min: " + str(themin) + "ms")
+    print("Jitter max: " + str(themax) + "ms")

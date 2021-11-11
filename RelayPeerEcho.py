@@ -70,6 +70,7 @@ if username == 'a':
         udpClientSock.sendto(str.encode("0"), server_addr)
         t = time.time()
         data = udpClientSock.recvfrom(1024)
+        print(data)
         elapsed = time.time() - t
         delays.append(elapsed)
         pktnumber += 1

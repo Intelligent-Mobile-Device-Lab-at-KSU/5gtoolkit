@@ -21,6 +21,7 @@ import signal
 import json
 import time
 import random
+import string
 
 f = open('config.json',)
 conf = json.load(f)
@@ -50,7 +51,8 @@ while True:
         elapsed = 0
         t = time.time()
         while (time.time() - t) <= duration:
-            udpServerSock.sendto(bytes([random.getrandbits(8) for _ in range(0, pktSize)]), client_addr)
+            s = ''.join(random.choice(string.digits) for _ in range(pktSize))
+            udpServerSock.sendto(s.encode(), client_addr)
             pktnumber += 1
         o = "done:"+str(pktnumber)
         udpServerSock.sendto(o.encode(), client_addr)

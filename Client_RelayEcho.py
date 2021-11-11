@@ -24,7 +24,7 @@ f = open('config.json',)
 conf = json.load(f)
 f.close()
 
-NumTimesToRun = sys.argv[1]
+NumTimesToRun = int(sys.argv[1])
 
 pktnumber=0
 delays = []
@@ -41,11 +41,19 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-print('Sending Packets...')
-while pktnumber!=NumTimesToRun:
+print('Sending Packets')
+while (pktnumber < NumTimesToRun):
     udpClientSock.sendto(str.encode("0"), server_addr)
     t = time.time()
     data = udpClientSock.recvfrom(1024)
     elapsed = time.time() - t
     delays.append(elapsed)
     pktnumber += 1
+
+udpClientSock.close()
+mu = sum(delays) / len(delays)
+variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+stddev = variance ** 0.5
+
+print("Completed %s measurements" % (pktnumber))
+print("Average: " + str(mu*1000) + "ms Std.Dev: " + str(stddev*1000) + "ms")

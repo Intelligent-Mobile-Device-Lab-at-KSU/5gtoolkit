@@ -99,6 +99,7 @@ if username == 'a':
             if x=="n":
                 udpClientSock.sendto(str.encode("done"), server_addr)
                 udpClientSock.close()
+                break
             elif x=="y":
                 continue
 

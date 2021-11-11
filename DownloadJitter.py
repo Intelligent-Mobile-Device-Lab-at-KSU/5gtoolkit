@@ -31,7 +31,7 @@ durationOfTestInSeconds_String = sys.argv[2]
 durationOfTestInSeconds = int(durationOfTestInSeconds_String)
 
 totalBytesRecvd = 0
-delays = []
+epochs = []
 
 server_addr = (conf["relay_server"]["ip"], conf["relay_server"]["port"])
 
@@ -51,9 +51,9 @@ print('Server ready.')
 print('Measurement in progress...')
 respFromServer = ''
 while "done" not in respFromServer:
-    t = time.time()
     respFromServer = udpClientSock.recvfrom(65507)
-    delays.append(time.time() - t)
+    epochs.append(time.time())
+    respFromServer = respFromServer[0].decode()
 
 udpClientSock.close()
 totalPacketsSent = int(respFromServer.split(":")[1])
@@ -61,13 +61,24 @@ print('Done.')
 
 # Calculate Jitter
 i = 0
-acc = 0
-L = len(delays)
-while i <= L:
-    acc += delays[i+1]-delays[i]
+delays = []
+L = len(epochs)
+while i <= L-2:
+    delays.append(epochs[i+1]-epochs[i])
     i += 1
-jitter = acc/L
 
-print("Server Sent: " + str(totalPacketsSent))
-print("Jitter: %s ms" % (jitter))
+mu = sum(delays) / len(delays)
+variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+stddev = variance ** 0.5
 
+mu = sum(delays) / len(delays)
+variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+stddev = variance ** 0.5
+
+print("Server attempted to send %s packets" % (totalPacketsSent))
+print("Jitter average: " + str(mu*1000) + "ms")
+print("Jitter std.dev: " + str(stddev*1000) + "ms")
+
+multiplied_delays = [element * 1000 for element in delays]
+print("Jitter min: " + str(min(multiplied_delays)) + "ms")
+print("Jitter max: " + str(max(multiplied_delays)) + "ms")

@@ -61,10 +61,10 @@ while ("PEER" not in respFromServer):
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 
-print("Peer found. Delaying 5 seconds...")
-time.sleep(5)
+print("Peer found. Echo system ready")
 
 if username == 'a':
+    x=input("Press any key to begin echo...")
     print('Sending Packets')
     while (pktnumber < NumTimesToRun):
         udpClientSock.sendto(str.encode("0"), server_addr)
@@ -94,6 +94,7 @@ if username == 'a':
         print("Max: " + str(themax) + "ms")
 
 elif username == 'b':
+    x=input("Press any key to receiving packets...")
     print('Listening for packets...')
     while True:
         data, client_addr = udpClientSock.recvfrom(1)

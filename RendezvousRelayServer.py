@@ -83,6 +83,7 @@ while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
 
+    # User a is done.
     if data_ctrl_msg[0] == "done":
         if client_addr[0] == peers['a']['ip']:
             udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
@@ -99,8 +100,6 @@ while True:
         elif client_addr[0] == peers['b']['ip']:
             udpServerSock.sendto(data, (peers['a']['ip'], peers['a']['port']))
             continue
-    else:
-        resetPeerList()
 
     if data_ctrl_msg[0] == "login":
         if data_ctrl_msg[1] == "a":
@@ -112,7 +111,7 @@ while True:
 
         udpServerSock.sendto(str("OK").encode(), client_addr)
 
-    if not peersNotified and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
+    if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         print(peers)
         udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
         udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))

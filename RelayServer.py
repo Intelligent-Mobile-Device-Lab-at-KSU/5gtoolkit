@@ -106,7 +106,7 @@ while True:
         udpServerSock.settimeout(None)
         print("UGR getting stats...")
         if not noHalt:
-            print("Halted by client.")
+            print("Halted.")
             print("Listening...")
             continue
 
@@ -140,7 +140,7 @@ while True:
         udpServerSock.settimeout(None)
         print("JU getting stats...")
         if not noHalt:
-            print("Halted by client.")
+            print("Halted.")
             print("Listening...")
             continue
 

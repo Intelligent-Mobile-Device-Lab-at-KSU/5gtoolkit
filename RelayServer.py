@@ -61,7 +61,7 @@ def UDPServerSocket_halt_listener():
         if message.decode() == "0":
             UDPServerSocket_halt.sendto(str("1").encode(),bytesAddressPair[1])
             noHalt = not noHalt
-        time.sleep(.0001)
+        time.sleep(.05)
 
 
 # Set up thread for UDP Server (phone is pushing as client to RPI)

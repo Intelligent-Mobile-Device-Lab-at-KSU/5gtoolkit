@@ -31,6 +31,7 @@ f.close()
 server_addr = (conf["relay_server"]["ip"], conf["relay_server"]["port"])
 
 udpServerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udpServerSock.settimeout(3)
 udpServerSock.bind(server_addr)
 print("Relay server listening on " + server_addr[0] + ":" + str(server_addr[1]))
 
@@ -97,6 +98,7 @@ while True:
             respFromUploader = respFromUploader[0].decode()
             totalBytesRecvd += len(respFromUploader)
 
+        print("UGR getting stats...")
         if not noHalt:
             print("Halted by client.")
             print("Listening...")
@@ -124,7 +126,7 @@ while True:
             respFromUploader = udpServerSock.recvfrom(65507)
             epochs.append(time.time())
             respFromUploader = respFromUploader[0].decode()
-
+        print("JU getting stats...")
         if not noHalt:
             print("Halted by client.")
             print("Listening...")

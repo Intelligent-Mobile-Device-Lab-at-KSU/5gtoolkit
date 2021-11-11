@@ -91,6 +91,7 @@ while True:
             respFromUploader = respFromUploader[0].decode()
 
         # Calculate Jitter
+        errorStatus = False
         i = 0
         delays = []
         L = len(epochs)
@@ -98,16 +99,26 @@ while True:
             delays.append(epochs[i + 1] - epochs[i])
             i += 1
 
-        mu = sum(delays) / len(delays)
-        variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
-        stddev = variance ** 0.5
-        multiplied_delays = [element * 1000 for element in delays]
+        if len(delays) == 0:
+            errorStatus = True
+            mu = -1
+            stddev = -1
+            themin = -1
+            themax = -1
+        else:
+            mu = sum(delays) / len(delays)
+            variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
+            stddev = variance ** 0.5
+            multiplied_delays = [element * 1000 for element in delays]
+            themin = min(multiplied_delays)
+            themax = max(multiplied_delays)
 
         ojson = {
+            "error": errorStatus,
             "avg": mu * 1000,
             "stddev": stddev * 1000,
-            "min": min(multiplied_delays),
-            "max": max(multiplied_delays)
+            "min": themin,
+            "max": themax
         }
         udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
         print("JU done.")

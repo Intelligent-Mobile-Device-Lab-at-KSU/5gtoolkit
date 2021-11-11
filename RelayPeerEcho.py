@@ -38,7 +38,8 @@ udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 
 def signal_handler(sig, frame):
-    udpClientSock.sendto(str.encode("done:a"), server_addr)
+    if username=='a':
+        udpClientSock.sendto(str.encode("done:a"), server_addr)
     udpClientSock.close()
     print('\n')
     print("%d bytes echoed!\n" % (pktnumber))

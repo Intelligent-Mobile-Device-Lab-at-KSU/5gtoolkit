@@ -71,9 +71,10 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-
+keepthreadalive = True
 def UDPkeepalive():
-    while True:
+    global keepthreadalive
+    while keepthreadalive:
         udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
         udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
         time.sleep(10)
@@ -88,9 +89,8 @@ while True:
     # User a is done.
     if data_ctrl_msg[0] == "done":
         udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
+        keepthreadalive = False
         resetPeerList()
-        if th_keepalive.is_alive():
-            th_keepalive.join()
         continue
 
     # Begin Relay

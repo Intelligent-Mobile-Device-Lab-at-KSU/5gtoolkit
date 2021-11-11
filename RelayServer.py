@@ -20,30 +20,57 @@ import sys
 import signal
 import json
 import time
+import threading
 import random
 import string
 
-f = open('config.json',)
+f = open('config.json', )
 conf = json.load(f)
 f.close()
 
 server_addr = (conf["relay_server"]["ip"], conf["relay_server"]["port"])
 
-udpServerSock= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udpServerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpServerSock.bind(server_addr)
 print("Relay server listening on " + server_addr[0] + ":" + str(server_addr[1]))
+
 
 def signal_handler(sig, frame):
     udpServerSock.close()
     print('\n')
     sys.exit(0)
 
+
 signal.signal(signal.SIGINT, signal_handler)
+
+noHalt = True
+server_halt_addr = (conf["relay_server"]["ip"], conf["relay_server"]["halt_port"])
+# Create a datagram socket
+UDPServerSocket_halt = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+UDPServerSocket_halt.bind(server_halt_addr)
+
+
+# This function is called in a separate thread for listening
+# for any halt commands sent from the phone in case the Server gets caught in a while loop.
+def UDPServerSocket_halt():
+    global noHalt
+    while True:
+        bytesAddressPair = UDPServerSocket_halt.recvfrom(1024)
+        message = bytesAddressPair[0]
+        if message == "0":
+            UDPServerSocket_halt.sendto("1",bytesAddressPair[1])
+            noHalt = not noHalt
+        time.sleep(.0001)
+
+
+# Set up thread for UDP Server (phone is pushing as client to RPI)
+th_halt_udp = threading.Thread(name='UDPServerSocket_halt', target=UDPServerSocket_halt, args=())
+th_halt_udp.start()
 
 while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
-    if data_ctrl_msg[0]=="GDR" or data_ctrl_msg[0]=="DJ":
+    if data_ctrl_msg[0] == "GDR" or data_ctrl_msg[0] == "DJ":
         print("Initiating " + data_ctrl_msg[0] + "...")
         pktnumber = 0
         pktSize = int(data_ctrl_msg[1])
@@ -53,42 +80,51 @@ while True:
             s = ''.join(random.choice(string.digits) for _ in range(pktSize))
             udpServerSock.sendto(s.encode(), client_addr)
             pktnumber += 1
-        o = "done:"+str(pktnumber)
+        o = "done:" + str(pktnumber)
         udpServerSock.sendto(o.encode(), client_addr)
         print(data_ctrl_msg[0] + " done.")
         print("Listening...")
-    if data_ctrl_msg[0]=="UGR":
+
+    if data_ctrl_msg[0] == "UGR":
         print("Initiating UGR...")
         packetSizeInBytes = int(data_ctrl_msg[1])
         respFromUploader = ''
         totalBytesRecvd = 0
         udpServerSock.sendto(str.encode("OK"), client_addr)
-        while "done" not in respFromUploader:
+        while ("done" not in respFromUploader) and noHalt:
             respFromUploader = udpServerSock.recvfrom(packetSizeInBytes)
             respFromUploader = respFromUploader[0].decode()
             totalBytesRecvd += len(respFromUploader)
 
+        if not noHalt:
+            noHalt = not noHalt
+            continue
+
         numberOfPackets = totalBytesRecvd / packetSizeInBytes
         ojson = {
-            "totalBytesRecvd" : totalBytesRecvd,
-            "numberOfPackets" : numberOfPackets
+            "totalBytesRecvd": totalBytesRecvd,
+            "numberOfPackets": numberOfPackets
         }
 
         udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
         print("UGR done.")
         print("Listening...")
 
-    if data_ctrl_msg[0]=="JU":
+    if data_ctrl_msg[0] == "JU":
         print("Initiating JU...")
         packetSizeInBytes = int(data_ctrl_msg[1])
         respFromUploader = ''
         totalBytesRecvd = 0
         epochs = []
         udpServerSock.sendto(str.encode("OK"), client_addr)
-        while "done" not in respFromUploader:
+        while ("done" not in respFromUploader) and noHalt:
             respFromUploader = udpServerSock.recvfrom(65507)
             epochs.append(time.time())
             respFromUploader = respFromUploader[0].decode()
+
+        if not noHalt:
+            noHalt = not noHalt
+            continue
 
         # Calculate Jitter
         errorStatus = False

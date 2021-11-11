@@ -98,6 +98,8 @@ while True:
             totalBytesRecvd += len(respFromUploader)
 
         if not noHalt:
+            print("Halted by client.")
+            print("Listening...")
             noHalt = not noHalt
             continue
 
@@ -124,6 +126,8 @@ while True:
             respFromUploader = respFromUploader[0].decode()
 
         if not noHalt:
+            print("Halted by client.")
+            print("Listening...")
             noHalt = not noHalt
             continue
 

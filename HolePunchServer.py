@@ -133,9 +133,9 @@ while True:
 
     if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         while True:
-            msgtoA = "PEER:" + peers['b']['ip'] + ":" + str(peers['b']['port'])
+            msgtoA = "PEER:" + peers['b']['ip'] + ":" + str(peers['b']['port']) + ":" + peers['a']['ip'] + ":" + str(peers['a']['port'])
             print(msgtoA)
-            msgtoB = "PEER:" + peers['a']['ip'] + ":" + str(peers['a']['port'])
+            msgtoB = "PEER:" + peers['a']['ip'] + ":" + str(peers['a']['port']) + ":" + peers['b']['ip'] + ":" + str(peers['b']['port'])
             print(msgtoB)
             udpServerSock.sendto(msgtoA.encode(), (peers['a']['ip'], peers['a']['port']))
             udpServerSock.sendto(msgtoB.encode(), (peers['b']['ip'], peers['b']['port']))

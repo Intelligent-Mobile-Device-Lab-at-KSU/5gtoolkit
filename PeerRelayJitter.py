@@ -78,9 +78,9 @@ if username == 'a':
     while True:
         respFromPeer = udpClientSock.recvfrom(65507)
         respFromPeer = respFromPeer[0].decode()
-        if respFromPeer=="keep-alive":
+        if respFromPeer == "keep-alive":
             continue
-        elif respFromPeer=="OK":
+        elif respFromPeer == "OK":
             print('Peer ready.')
             print("Ensure b displays \"Listening for packets...\" then when ready...")
             break
@@ -96,7 +96,7 @@ if username == 'a':
             totalPacketsSent += 1
 
         print("Done. Awaiting Stats From Peer...")
-        udpClientSock.sendto(str.encode("done"), server_addr)
+        udpClientSock.sendto(str.encode("peer_finish"), server_addr)
         respFromPeer = udpClientSock.recvfrom(1024)
         print(respFromPeer[0].decode())
         stats = json.loads(respFromPeer[0].decode())
@@ -165,7 +165,7 @@ elif username == 'b':
                 print(data)
                 if data == "keep-alive":
                     continue
-                elif data == "done":
+                elif data == "peer_finish":
                     udpClientSock.settimeout(None)
                     timeOutNotSet = True
                     # Calculate Jitter

@@ -41,7 +41,6 @@ server_addr = (conf["hole_punch_server"]["ip"], conf["hole_punch_server"]["port"
 
 udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-
 def signal_handler(sig, frame):
     if username=='a':
         # sending relay server to logout all users
@@ -63,7 +62,6 @@ def udp_hole_keepalive():
         time.sleep(10)
 
 th_keepalive = threading.Thread(name='udp_hole_keepalive',target=udp_hole_keepalive, args=())
-
 
 udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
 
@@ -88,66 +86,29 @@ print(peer_local_addr)
 
 th_keepalive.start()
 
+respFromPeer = ''
 print("Peer logged in.")
-txyes = False
-rxyes = False
-def udp_hole_rx():
-    global udpClientSock
-    global peer_addr
-    global txyes
-    udpClientSock.settimeout(5)
-    while True:
-        try:
-            data, peer_addr = udpClientSock.recvfrom(1024)
-            data = data[0].decode()
-            if data == "hello":
-                udpClientSock.sendto(str.encode("READY"), peer_addr)
-                break
-        except:
-            g = 1
-        time.sleep(1)
-    txyes = True
-
-def udp_hole_tx():
-    global udpClientSock
-    global peer_addr
-    global rxyes
-    udpClientSock.settimeout(5)
-    while True:
-        udpClientSock.sendto(str.encode("hello"), peer_addr)
-        print("Sent hello...")
-        try:
-            data, the_addr = udpClientSock.recvfrom(1024)
-            data = data[0].decode()
-            if data == "READY":
-                udpClientSock.sendto(str.encode("READY"), peer_addr)
-                break
-        except:
-            g=1
-        time.sleep(1)
-    rxyes = True
 
 if username == 'a':
-    th_udp_tx = threading.Thread(name='udp_hole_tx', target=udp_hole_tx, args=())
-    th_udp_tx.start()
-    while True:
-        if txyes:
-            th_udp_tx.join()
-            break
+    print("Sending Hello...")
+    while ("READY" not in respFromPeer):
+        print("Sending Hello...")
+        udpClientSock.sendto(str.encode("hello"), peer_addr)
+        respFromServer = udpClientSock.recvfrom(1024)
+        respFromServer = respFromServer[0].decode()
         time.sleep(1)
 
-elif username == 'b':
-    th_udp_rx = threading.Thread(name='udp_hole_rx', target=udp_hole_rx, args=())
-    th_udp_rx.start()
-    while True:
-        if rxyes:
-            th_udp_rx.join()
-            break
-        time.sleep(1)
+if username == 'b':
+    print("Awaiting Peer Hello...")
+    theaddr = ('',0)
+    while ("hello" not in respFromPeer):
+        udpClientSock.sendto(str.encode("0"), peer_addr)
+        respFromServer, theaddr = udpClientSock.recvfrom(1024)
+        respFromServer = respFromServer[0].decode()
+    print(theaddr)
+    udpClientSock.sendto(str.encode("READY"), peer_addr)
 
-udpClientSock.settimeout(None)
 print("Hole-Punch system ready.")
-
 # Device 1 should be logged into relay server as: a
 if username == 'a':
     print("Ensure b displays \"Listening for packets...\" then when ready...")

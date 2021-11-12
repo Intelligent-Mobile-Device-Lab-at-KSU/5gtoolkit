@@ -32,15 +32,19 @@ conf = json.load(f)
 f.close()
 
 peers = {
-    'a': {
-        'ip': '',
-        'port': 0
-    },
-    'b': {
-        'ip': '',
-        'port': 0
-    }
-}
+            'a': {
+                'ip': '',
+                'port': 0,
+                'local_ip': '',
+                'local_port': 0
+            },
+            'b': {
+                'ip': '',
+                'port': 0,
+                'local_ip': '',
+                'local_port': 0
+            }
+        }
 
 server_addr = (conf["hole_punch_server"]["ip"], conf["hole_punch_server"]["port"])
 server_halt_addr = (conf["hole_punch_server"]["ip"], conf["hole_punch_server"]["halt_port"])
@@ -85,11 +89,15 @@ while True:
         peers = {
             'a': {
                 'ip': '',
-                'port': 0
+                'port': 0,
+                'local_ip': '',
+                'local_port': 0
             },
             'b': {
                 'ip': '',
-                'port': 0
+                'port': 0,
+                'local_ip': '',
+                'local_port': 0
             }
         }
         print('Logged all users out.')
@@ -107,11 +115,15 @@ while True:
         peers = {
             'a': {
                 'ip': '',
-                'port': 0
+                'port': 0,
+                'local_ip': '',
+                'local_port': 0
             },
             'b': {
                 'ip': '',
-                'port': 0
+                'port': 0,
+                'local_ip': '',
+                'local_port': 0
             }
         }
         print('Logged all users out.')
@@ -122,20 +134,24 @@ while True:
         keepthreadalive = True
         if data_ctrl_msg[1] == "a":
             peers['a']['ip']=client_addr[0]
-            peers['a']['port'] = client_addr[1]
+            peers['a']['port'] = int(client_addr[1])
+            peers['a']['local_ip']=data_ctrl_msg[2]
+            peers['a']['local_port'] = int(data_ctrl_msg[3])
             print(peers)
         elif data_ctrl_msg[1] == "b":
             peers['b']['ip'] = client_addr[0]
-            peers['b']['port'] = client_addr[1]
+            peers['b']['port'] = int(client_addr[1])
+            peers['b']['local_ip']= data_ctrl_msg[2]
+            peers['b']['local_port'] = int(data_ctrl_msg[3])
             print(peers)
 
         udpServerSock.sendto(str("OK").encode(), client_addr)
 
     if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
         while True:
-            msgtoA = "PEER:" + peers['b']['ip'] + ":" + str(peers['b']['port']) + ":" + peers['a']['ip'] + ":" + str(peers['a']['port'])
+            msgtoA = "PEER:" + peers['b']['ip'] + ":" + str(peers['b']['port']) + ":" + peers['b']['local_ip'] + ":" + str(peers['b']['local_port'])
             print(msgtoA)
-            msgtoB = "PEER:" + peers['a']['ip'] + ":" + str(peers['a']['port']) + ":" + peers['b']['ip'] + ":" + str(peers['b']['port'])
+            msgtoB = "PEER:" + peers['a']['ip'] + ":" + str(peers['a']['port']) + ":" + peers['a']['local_ip'] + ":" + str(peers['a']['local_port'])
             print(msgtoB)
             udpServerSock.sendto(msgtoA.encode(), (peers['a']['ip'], peers['a']['port']))
             udpServerSock.sendto(msgtoB.encode(), (peers['b']['ip'], peers['b']['port']))

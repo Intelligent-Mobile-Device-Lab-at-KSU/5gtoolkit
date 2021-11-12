@@ -47,6 +47,7 @@ udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 def signal_handler(sig, frame):
     if username=='a':
         udpClientSock.sendto(str.encode("stop"), server_addr)
+        udpClientSock.sendto(str.encode("peer_close"), server_addr)
     udpClientSock.close()
     print('\n')
     sys.exit(0)
@@ -130,7 +131,8 @@ if username == 'a':
             print('\n')
             x = input("Run again? (y/n)")
             if x == "n":
-                print("Sending B: done, message.")
+                print("Sending B: close, message and Server done (logout) message.")
+                udpClientSock.sendto(str.encode("peer_close"), server_addr)
                 udpClientSock.sendto(str.encode("done:a"), server_addr)
                 udpClientSock.close()
                 break
@@ -143,11 +145,13 @@ elif username == 'b':
     pktnumber = 0
     RPJrunning = False
     timeOutNotSet = True
+    totalBytesRecvd = 0
+    epochs = []
     while True:
         if not RPJrunning:
             data, client_addr = udpClientSock.recvfrom(65507)
             data = data.decode()
-            if data == "stop":
+            if data == "peer_close":
                 udpClientSock.close()
                 break
             elif data == "keep-alive":
@@ -170,6 +174,9 @@ elif username == 'b':
                 data = data[0].decode()
                 if data == "keep-alive":
                     continue
+                elif data == "peer_close":
+                    udpClientSock.close()
+                    break
                 elif data == "peer_finish":
                     udpClientSock.settimeout(None)
                     timeOutNotSet = True

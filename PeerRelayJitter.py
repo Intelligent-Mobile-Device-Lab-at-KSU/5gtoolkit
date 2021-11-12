@@ -54,7 +54,7 @@ def signal_handler(sig, frame):
 
 
 signal.signal(signal.SIGINT, signal_handler)
-
+udpClientSock.sendto(str.encode("logout:" + username), server_addr)
 print("Logging In To Rendezvous Relay Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
@@ -111,12 +111,14 @@ if username == 'a':
         if stats["error"]:
             print("Divide by zero error at the Server. Maybe decrease the packet size? Try again.")
             print('\n')
-            x = input("Run again with new packet size (type n to end): ")
+            x = input("Run again with new packet size (type n to end / k to keep same size: " + packetSizeInBytes_String + "): ")
             if x == "n":
                 print("Sending B: stop, message.")
                 udpClientSock.sendto(str.encode("stop"), server_addr)
                 udpClientSock.close()
                 break
+            if x == "k":
+                continue
             else:
                 packetSizeInBytes_String = x
                 packetSizeInBytes = int(packetSizeInBytes_String)
@@ -147,6 +149,7 @@ elif username == 'b':
     timeOutNotSet = True
     totalBytesRecvd = 0
     epochs = []
+    STDBY = False
     while True:
         if not RPJrunning:
             data, client_addr = udpClientSock.recvfrom(65507)
@@ -169,12 +172,12 @@ elif username == 'b':
             try:
                 data = udpClientSock.recvfrom(packetSizeInBytes)
                 data = data[0].decode()
-                if data == "keep-alive":
+                if not STDBY and data == "keep-alive":
                     continue
-                elif data == "peer_close":
+                elif not STDBY and data == "peer_close":
                     udpClientSock.close()
                     break
-                elif data == "peer_finish":
+                elif not STDBY and data == "peer_finish":
                     udpClientSock.settimeout(None)
                     timeOutNotSet = True
                     # Calculate Jitter
@@ -212,11 +215,13 @@ elif username == 'b':
                     epochs = []
                     pktnumber = 0
                     print("Listening for more measurements from A...")
+                    state = True
                 else:
                     # Clock receive time of arrival
                     epochs.append(time.time())
                     pktnumber += 1
                     if timeOutNotSet:
+                        state = False
                         timeOutNotSet = False
                         udpClientSock.settimeout(5)
             except:

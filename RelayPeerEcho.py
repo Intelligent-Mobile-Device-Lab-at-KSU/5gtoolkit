@@ -49,7 +49,7 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-
+udpClientSock.sendto(str.encode("logout:" + username), server_addr)
 print("Logging In To Rendezvous Relay Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
@@ -105,8 +105,8 @@ if username == 'a':
             print('\n')
             x=input("Run again? (y/n)")
             if x == "n":
-                print("Sending B: finished, message.")
-                udpClientSock.sendto(str.encode("peer_finish"), server_addr)
+                print("Sending B: closed, message.")
+                udpClientSock.sendto(str.encode("peer_close"), server_addr)
                 udpClientSock.close()
                 break
             elif x=="y":
@@ -119,7 +119,7 @@ elif username == 'b':
     print('Listening for packets...')
     while True:
         data, client_addr = udpClientSock.recvfrom(1024)
-        if data.decode() == "peer_finish":
+        if data.decode() == "peer_close":
             udpClientSock.close()
             break
         elif data.decode() == "keep-alive":

@@ -59,6 +59,7 @@ def udp_hole_keepalive():
 
 th_keepalive = threading.Thread(name='udp_hole_keepalive',target=udp_hole_keepalive, args=())
 
+
 udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
 print("Logging In To Hole-Punch Server as username: " + username + "...")
 respFromServer=''
@@ -77,7 +78,7 @@ udpClientSock.sendto(str.encode("CONFIG_OK"), server_addr)
 peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
 print(peer_addr)
 
-
+th_keepalive.start()
 if username == 'a':
     print("Peer logged in.")
     udpClientSock.settimeout(1)

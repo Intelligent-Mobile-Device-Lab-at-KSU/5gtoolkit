@@ -15,7 +15,7 @@
 # 3. Edit the config.json file so that RendezvousRelayServer server ip and port are correct.
 # 4. python PeerRelayJitter.py <a|b> <size of packets in bytes> <duration of measurement in seconds>
 # 5. Example: python PeerRelayJitter.py a 100 1, means: login as user 'a', send 100 byte packets for 1 second to 'b'
-# 6. Example: python PeerRelayJitter.py b 100 1, means: login as user 'b', receive 100 byte packets for 1 second from 'a'
+# 6. Example: python PeerRelayJitter.py b 0 0, means: login as user 'b', receive packets from 'a', send back results
 # 7. A is always the sender. B is always the receiver.
 
 import socket
@@ -69,7 +69,7 @@ while ("PEER" not in respFromServer):
 
 udpClientSock.sendto(str.encode("OK"), server_addr)
 
-print("Peer found. Echo system ready.")
+print("Peer found. Peer Jitter system ready.")
 
 # Device 1 should be logged into rendezvous server as: a
 if username == 'a':
@@ -150,11 +150,11 @@ elif username == 'b':
                 totalBytesRecvd = 0
                 epochs = []
                 udpClientSock.sendto(str.encode("OK"), client_addr)
-                x = print("WARNING: Ensure b shows: \"Listening for packets...\", before running a.\nPress any key to continue.")
+                x = input("WARNING: Ensure b shows: \"Listening for packets...\", before running a.\nPress any key to continue.")
                 print('Listening for packets...')
                 RPJrunning = True
-                udpClientSock.settimeout(3)
         else: # RPJ running
+            udpClientSock.settimeout(5)
             try:
                 data = udpClientSock.recvfrom(packetSizeInBytes)
                 data = data[0].decode()

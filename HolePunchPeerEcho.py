@@ -49,7 +49,7 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-udpClientSock.sendto(str.encode("logout:" + username), server_addr)
+udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
 print("Logging In To Hole-Punch Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
@@ -63,7 +63,7 @@ while ("PEER" not in respFromServer):
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 
-udpClientSock.sendto(str.encode("OK"), server_addr)
+udpClientSock.sendto(str.encode("CONFIG_OK"), server_addr)
 peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
 print("Peer found. Hole-Punch system ready.")
 

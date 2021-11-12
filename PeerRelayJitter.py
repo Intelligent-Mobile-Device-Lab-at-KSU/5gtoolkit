@@ -96,10 +96,16 @@ if username == 'a':
             totalPacketsSent += 1
 
         print("Done. Awaiting Stats From Peer...")
-        udpClientSock.sendto(str.encode("peer_finish"), server_addr)
-        respFromPeer = udpClientSock.recvfrom(1024)
-        print(respFromPeer[0].decode())
-        stats = json.loads(respFromPeer[0].decode())
+        stats = []
+        while True:
+            udpClientSock.sendto(str.encode("peer_finish"), server_addr)
+            data = udpClientSock.recvfrom(1024)
+            print(data[0].decode())
+            try:
+                stats = json.loads(respFromPeer[0].decode())
+                break
+            except:
+                continue
 
         if stats["error"]:
             print("Divide by zero error at the Server. Maybe decrease the packet size? Try again.")

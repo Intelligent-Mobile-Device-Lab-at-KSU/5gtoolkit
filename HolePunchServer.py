@@ -65,7 +65,7 @@ def UDPkeepalive():
                 udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
             if peers['b']['port'] > 0:
                 udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
-        time.sleep(.1)
+        time.sleep(10)
 
 th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
 

@@ -53,8 +53,10 @@ signal.signal(signal.SIGINT, signal_handler)
 
 
 def udp_hole_keepalive():
+    global username
+    tmp_str = "keep-alive:"+username
     while True:
-        udpClientSock.sendto(str("keep-alive").encode(), server_addr)
+        udpClientSock.sendto(tmp_str.encode(), server_addr)
         time.sleep(10)
 
 th_keepalive = threading.Thread(name='udp_hole_keepalive',target=udp_hole_keepalive, args=())

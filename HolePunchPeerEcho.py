@@ -85,12 +85,13 @@ if username == 'a':
     print("Peer logged in.")
     udpClientSock.settimeout(1)
     while True:
-        udpClientSock.sendto(str.encode("13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23"), peer_addr)
+        udpClientSock.sendto(str.encode("hello"), peer_addr)
         print("Sent hello...")
         try:
             data = udpClientSock.recvfrom(1024)
             data = data[0].decode()
-            if data == "READYREADYREADYREADYREADYREADYREADY":
+            print(data)
+            if data == "READY":
                 break
         except:
             time.sleep(1)
@@ -101,9 +102,11 @@ if username == 'b':
     while True:
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        if data == "13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23":
-            udpClientSock.sendto(str.encode("READYREADYREADYREADYREADYREADYREADY"), peer_addr)
+        print(data)
+        if data == "hello":
+            udpClientSock.sendto(str.encode("READY"), peer_addr)
             break
+        time.sleep(.1)
 
 udpClientSock.settimeout(None)
 print("Hole-Punch system ready.")

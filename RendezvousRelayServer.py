@@ -70,6 +70,23 @@ while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
 
+    if data_ctrl_msg[0] == "logout":
+        keepthreadalive = False
+        peersNotified = False
+        peers = {
+            'a': {
+                'ip': '',
+                'port': 0
+            },
+            'b': {
+                'ip': '',
+                'port': 0
+            }
+        }
+        print('Logged all users out.')
+        print("Peer Relay Server listening on " + server_addr[0] + ":" + str(server_addr[1]))
+        continue
+        
     # User a is done.
     if data_ctrl_msg[0] == "done" or data_ctrl_msg[0] == "logout":
         udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))

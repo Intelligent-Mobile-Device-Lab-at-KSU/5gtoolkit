@@ -113,5 +113,6 @@ while True:
         udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
         peersNotified = True
         print("Peers Notified, echo service ready.")
-        th_keepalive.start()
+        if not th_keepalive.isAlive():
+            th_keepalive.start()
         keepthreadalive = True

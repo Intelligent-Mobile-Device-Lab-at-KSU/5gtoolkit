@@ -37,7 +37,7 @@ pktnumber = 0
 server_addr = (conf["hole_punch_server"]["ip"], conf["hole_punch_server"]["port"])
 
 udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-
+udpPeerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def signal_handler(sig, frame):
     if username=='a':
@@ -78,17 +78,20 @@ while ("PEER" not in respFromServer):
 
 udpClientSock.sendto(str.encode("CONFIG_OK"), server_addr)
 peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
+my_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
+udpPeerServerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+udpPeerServerSock.bind(('0.0.0.0',my_addr[1]))
 print(peer_addr)
 
 th_keepalive.start()
 if username == 'a':
     print("Peer logged in.")
-    udpClientSock.settimeout(1)
+    udpPeerSock.settimeout(1)
     while True:
-        udpClientSock.sendto(str.encode("13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23"), peer_addr)
+        udpPeerSock.sendto(str.encode("13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23"), peer_addr)
         print("Sent hello...")
         try:
-            data = udpClientSock.recvfrom(1024)
+            data = udpPeerSock.recvfrom(1024)
             data = data[0].decode()
             if data == "READYREADYREADYREADYREADYREADYREADY":
                 break
@@ -99,10 +102,10 @@ if username == 'a':
 if username == 'b':
     print("Peer logged in. Awaiting contact from peer...")
     while True:
-        data = udpClientSock.recvfrom(1024)
+        data = udpPeerServerSock.recvfrom(1024)
         data = data[0].decode()
         if data == "13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23":
-            udpClientSock.sendto(str.encode("READYREADYREADYREADYREADYREADYREADY"), peer_addr)
+            udpPeerServerSock.sendto(str.encode("READYREADYREADYREADYREADYREADYREADY"), peer_addr)
             break
 
 udpClientSock.settimeout(None)

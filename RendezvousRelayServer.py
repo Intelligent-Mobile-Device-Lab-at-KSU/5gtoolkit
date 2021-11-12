@@ -57,9 +57,10 @@ signal.signal(signal.SIGINT, signal_handler)
 keepthreadalive = True
 def UDPkeepalive():
     global keepthreadalive
-    while keepthreadalive:
-        udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
-        udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
+    while True:
+        if keepthreadalive:
+            udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
+            udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
         time.sleep(10)
 
 th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
@@ -113,6 +114,9 @@ while True:
         udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
         peersNotified = True
         print("Peers Notified, echo service ready.")
-        if not th_keepalive.isAlive():
-            th_keepalive.start()
+        if not th_keepalive.is_alive():
+            try:
+                th_keepalive.start()
+            except:
+                print('huh?')
         keepthreadalive = True

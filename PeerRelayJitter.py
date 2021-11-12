@@ -162,7 +162,6 @@ elif username == 'b':
                     timeOutNotSet = False
                     udpClientSock.settimeout(5)
                 data = data[0].decode()
-                print(data)
                 if data == "keep-alive":
                     continue
                 elif data == "peer_finish":
@@ -201,6 +200,7 @@ elif username == 'b':
                     udpClientSock.sendto(json.dumps(ojson).encode(), server_addr)
                     totalBytesRecvd = 0
                     epochs = []
+                    print("Listening for more measurements from A...")
                 else:
                     # Clock receive time of arrival
                     epochs.append(time.time())

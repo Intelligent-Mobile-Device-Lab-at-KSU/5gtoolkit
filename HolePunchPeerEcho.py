@@ -83,7 +83,7 @@ print(peer_addr)
 th_keepalive.start()
 #if username == 'a':
 print("Peer logged in.")
-udpClientSock.settimeout(3)
+udpClientSock.settimeout(5)
 while True:
     udpClientSock.sendto(str.encode("hello"), peer_addr)
     print("Sent hello...")
@@ -95,7 +95,7 @@ while True:
             break
     except:
         g=1
-    time.sleep(1)
+    time.sleep(5)
 
 
 udpClientSock.settimeout(None)

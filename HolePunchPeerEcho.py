@@ -91,22 +91,29 @@ print("Peer logged in.")
 
 if username == 'a':
     print("Sending Hello...")
+    udpClientSock.settimeout(1)
     while ("READY" not in respFromPeer):
         print("Sending Hello...")
         udpClientSock.sendto(tmp_str.encode(), server_addr)
         udpClientSock.sendto(str.encode("hello"), peer_addr)
-        respFromServer = udpClientSock.recvfrom(1024)
-        respFromServer = respFromServer[0].decode()
-        time.sleep(1)
+        try:
+            respFromServer = udpClientSock.recvfrom(1024)
+            respFromServer = respFromServer[0].decode()
+        except:
+            g=1
 
 if username == 'b':
     print("Awaiting Peer Hello...")
     theaddr = ('',0)
+    udpClientSock.settimeout(1)
     while ("hello" not in respFromPeer):
         udpClientSock.sendto(tmp_str.encode(), server_addr)
         udpClientSock.sendto(str.encode("0"), peer_addr)
-        respFromServer, theaddr = udpClientSock.recvfrom(1024)
-        respFromServer = respFromServer.decode()
+        try:
+            respFromServer, theaddr = udpClientSock.recvfrom(1024)
+            respFromServer = respFromServer.decode()
+        except:
+            g=1
     print(theaddr)
     udpClientSock.sendto(str.encode("READY"), peer_addr)
 

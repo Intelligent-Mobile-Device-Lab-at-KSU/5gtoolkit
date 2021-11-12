@@ -135,6 +135,7 @@ if username == 'a':
 elif username == 'b':
     pktnumber = 0
     RPJrunning = False
+    timeOutNotSet = True
     while True:
         if not RPJrunning:
             data, client_addr = udpClientSock.recvfrom(65507)
@@ -154,15 +155,17 @@ elif username == 'b':
                 print('Listening for packets...')
                 RPJrunning = True
         else: # RPJ running
-            udpClientSock.settimeout(5)
             try:
                 data = udpClientSock.recvfrom(packetSizeInBytes)
+                if timeOutNotSet:
+                    timeOutNotSet = False
+                    udpClientSock.settimeout(5)
                 data = data[0].decode()
                 if data == "keep-alive":
                     continue
                 elif data == "done":
                     udpClientSock.settimeout(None)
-
+                    timeOutNotSet = True
                     # Calculate Jitter
                     errorStatus = False
                     i = 0
@@ -201,6 +204,7 @@ elif username == 'b':
                     pktnumber += 1
             except:
                 print("Halted.")
-                print("Listening...")
+                print("Listening for RPJ message from A...")
                 RPJrunning = False
+                timeOutNotSet = True
                 continue

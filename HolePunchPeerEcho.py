@@ -90,7 +90,6 @@ if username == 'a':
         try:
             data = udpClientSock.recvfrom(1024)
             data = data[0].decode()
-            print(data)
             if data == "READY":
                 break
         except:
@@ -102,7 +101,6 @@ if username == 'b':
     while True:
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        print(data)
         if data == "hello":
             udpClientSock.sendto(str.encode("READY"), peer_addr)
             break

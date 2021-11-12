@@ -67,13 +67,17 @@ def UDPkeepalive():
                 udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
         time.sleep(10)
 
-th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
+#th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
 
 peersNotified = False
-th_keepalive.start()
+#th_keepalive.start()
 while True:
-    data, client_addr = udpServerSock.recvfrom(1024)
+    data, client_addr = udpServerSock.recvfrom(65507)
     data_ctrl_msg = data.decode().split(":")
+
+    if data_ctrl_msg[0] == "keep-alive":
+        udpServerSock.sendto(str("keepalive!").encode(), client_addr)
+        continue
 
     if data_ctrl_msg[0] == "checkstatus" and data_ctrl_msg[1] == "a":
         keepthreadalive = False

@@ -49,7 +49,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-print('Logging In To Rendezvous Relay Server...')
+print('Logging In To Rendezvous Relay Server as username: a...')
 respFromServer=''
 while ("OK" not in respFromServer):
     udpClientSock.sendto(str.encode("login:" + username), server_addr)
@@ -64,10 +64,11 @@ while ("PEER" not in respFromServer):
 
 udpClientSock.sendto(str.encode("OK"), server_addr)
 
-print("Peer found. Echo system ready")
+print("Peer found. Echo system ready.")
 
 if username == 'a':
-    x=input("Press any key to begin echo...")
+    print("Ensure b displays \"Listening for packets...\" then when ready...")
+    x=input("The press any key to begin delay test through Rendezvous Relay Server...")
     while True:
         print('Sending Packets')
         pktnumber = 0
@@ -99,7 +100,7 @@ if username == 'a':
             print("Max: " + str(themax) + "ms")
             print('\n')
             x=input("Run again? (y/n)")
-            if x=="n":
+            if x == "n":
                 udpClientSock.sendto(str.encode("done:a"), server_addr)
                 udpClientSock.close()
                 break
@@ -107,6 +108,7 @@ if username == 'a':
                 continue
 
 elif username == 'b':
+    print("WARNING: Ensure b shows: \"Listening for packets...\", before running a")
     x=input("Press any key to receiving packets...")
     print('Listening for packets...')
     while True:

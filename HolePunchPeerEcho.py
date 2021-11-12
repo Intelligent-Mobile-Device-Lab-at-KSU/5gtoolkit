@@ -53,7 +53,7 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-
+tmp_str = "keep-alive:"+username
 def udp_hole_keepalive():
     global username
     tmp_str = "keep-alive:"+username
@@ -84,7 +84,7 @@ peer_local_addr = (respFromServer.split(":")[3], int(respFromServer.split(":")[4
 print(peer_addr)
 print(peer_local_addr)
 
-th_keepalive.start()
+# th_keepalive.start()
 
 respFromPeer = ''
 print("Peer logged in.")
@@ -93,6 +93,7 @@ if username == 'a':
     print("Sending Hello...")
     while ("READY" not in respFromPeer):
         print("Sending Hello...")
+        udpClientSock.sendto(tmp_str.encode(), server_addr)
         udpClientSock.sendto(str.encode("hello"), peer_addr)
         respFromServer = udpClientSock.recvfrom(1024)
         respFromServer = respFromServer[0].decode()
@@ -102,6 +103,7 @@ if username == 'b':
     print("Awaiting Peer Hello...")
     theaddr = ('',0)
     while ("hello" not in respFromPeer):
+        udpClientSock.sendto(tmp_str.encode(), server_addr)
         udpClientSock.sendto(str.encode("0"), peer_addr)
         respFromServer, theaddr = udpClientSock.recvfrom(1024)
         respFromServer = respFromServer.decode()

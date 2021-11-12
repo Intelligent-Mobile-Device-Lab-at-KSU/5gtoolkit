@@ -23,6 +23,8 @@ import sys
 import signal
 import time
 import json
+import threading
+
 f = open('config.json',)
 conf = json.load(f)
 f.close()
@@ -49,6 +51,14 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
+
+def udp_hole_keepalive():
+    while True:
+        udpClientSock.sendto(str("keep-alive").encode(), server_addr)
+        time.sleep(10)
+
+th_keepalive = threading.Thread(name='udp_hole_keepalive',target=udp_hole_keepalive, args=())
+
 udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
 print("Logging In To Hole-Punch Server as username: " + username + "...")
 respFromServer=''
@@ -66,7 +76,25 @@ while ("PEER" not in respFromServer):
 udpClientSock.sendto(str.encode("CONFIG_OK"), server_addr)
 peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
 print(peer_addr)
-print("Peer found. Hole-Punch system ready.")
+print("Peer found. Attempting to contact peer...")
+
+if username == 'a':
+    while True:
+        udpClientSock.sendto(str.encode("HELLO"), peer_addr)
+        data = udpClientSock.recvfrom(1024)
+        if data[0].decode() == "READY":
+            break
+        time.sleep(1)
+
+if username == 'b':
+    while True:
+        data = udpClientSock.recvfrom(1024)
+        if data[0].decode() == "HELLO":
+            udpClientSock.sendto(str.encode("READY"), peer_addr)
+            break
+        time.sleep(1)
+        
+print("Hole-Punch system ready.")
 
 # Device 1 should be logged into relay server as: a
 if username == 'a':

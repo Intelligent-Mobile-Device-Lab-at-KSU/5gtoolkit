@@ -49,7 +49,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 
-print('Logging In To Rendezvous Relay Server as username: a...')
+print("Logging In To Rendezvous Relay Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
     udpClientSock.sendto(str.encode("login:" + username), server_addr)
@@ -81,6 +81,8 @@ if username == 'a':
             if data[0].decode()=="keep-alive":
                 continue
             elapsed = time.time() - t
+            if elapsed==0.0:
+                continue
             delays.append(elapsed)
             pktnumber += 1
 

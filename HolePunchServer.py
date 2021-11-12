@@ -61,13 +61,17 @@ def UDPkeepalive():
     global keepthreadalive
     while True:
         if keepthreadalive:
-            udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
-            udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
+            if peers['a']['port'] > 0:
+                udpServerSock.sendto(str("keep-alive").encode(), (peers['a']['ip'], peers['a']['port']))
+            if peers['b']['port'] > 0:
+                udpServerSock.sendto(str("keep-alive").encode(), (peers['b']['ip'], peers['b']['port']))
         time.sleep(10)
 
 th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=())
 
 peersNotified = False
+th_keepalive.start()
+keepthreadalive = True
 while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
@@ -130,9 +134,3 @@ while True:
         udpServerSock.sendto(msgtoB.encode(), (peers['b']['ip'], peers['b']['port']))
         peersNotified = True
         print("Peers Notified, hole-punch established.")
-        if not th_keepalive.is_alive():
-            try:
-                th_keepalive.start()
-            except:
-                print('huh?')
-        keepthreadalive = True

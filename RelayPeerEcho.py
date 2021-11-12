@@ -13,7 +13,7 @@
 
 # 1. Open Termux.
 # 2. Download the 5gtoolkit git repo.
-# 3. Edit the config.json file so that echo server ip and port are correct.
+# 3. Edit the config.json file so that RendezvousRelayServer server ip and port are correct.
 # 4. python RelayPeerEcho.py <a|b> <number of measurements>
 # 5. Example: python RelayPeerEcho.py a 10, means: login as user 'a', get 10 echoes from 'b'
 # 6. Example: python RelayPeerEcho.py b 10, means: login as user 'b', get 10 echoes from 'a'
@@ -39,6 +39,7 @@ udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 def signal_handler(sig, frame):
     if username=='a':
+        # sending relay server to logout all users
         udpClientSock.sendto(str.encode("done:a"), server_addr)
     udpClientSock.close()
     print('\n')
@@ -104,8 +105,8 @@ if username == 'a':
             print('\n')
             x=input("Run again? (y/n)")
             if x == "n":
-                print("Sending B: done, message.")
-                udpClientSock.sendto(str.encode("done:a"), server_addr)
+                print("Sending B: finished, message.")
+                udpClientSock.sendto(str.encode("peer_finish"), server_addr)
                 udpClientSock.close()
                 break
             elif x=="y":
@@ -118,7 +119,7 @@ elif username == 'b':
     print('Listening for packets...')
     while True:
         data, client_addr = udpClientSock.recvfrom(1024)
-        if data.decode() == "done":
+        if data.decode() == "peer_finish":
             udpClientSock.close()
             break
         elif data.decode() == "keep-alive":

@@ -79,23 +79,30 @@ print(peer_addr)
 
 
 if username == 'a':
-    print("Peer logged in. Attempting to contact peer...")
+    print("Peer logged in.")
+    udpClientSock.settimeout(1)
     while True:
-        udpClientSock.sendto(str.encode("HELLO"), peer_addr)
-        data = udpClientSock.recvfrom(1024)
-        data = data[0].decode()
-        if data == "READY":
-            break
+        udpClientSock.sendto(str.encode("hello"), peer_addr)
+        print("Sent hello...")
+        try:
+            data = udpClientSock.recvfrom(1024)
+            data = data[0].decode()
+            if data == "READY":
+                break
+        except:
+            time.sleep(1)
+        time.sleep(1)
 
 if username == 'b':
     print("Peer logged in. Awaiting contact from peer...")
     while True:
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        if data == "HELLO":
+        if data == "hello":
             udpClientSock.sendto(str.encode("READY"), peer_addr)
             break
 
+udpClientSock.settimeout(None)
 print("Hole-Punch system ready.")
 
 # Device 1 should be logged into relay server as: a

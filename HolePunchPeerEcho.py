@@ -70,7 +70,7 @@ udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
 print("Logging In To Hole-Punch Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
-    udpClientSock.sendto(str.encode("login:" + username + ":" + local_ip + ":" + udpClientSock.getsockname()[1]), server_addr)
+    udpClientSock.sendto(str.encode("login:" + username + ":" + local_ip + ":" + str(udpClientSock.getsockname()[1])), server_addr)
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 

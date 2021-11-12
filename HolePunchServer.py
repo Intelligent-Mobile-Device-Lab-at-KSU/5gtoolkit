@@ -148,16 +148,23 @@ while True:
         udpServerSock.sendto(str("OK").encode(), client_addr)
 
     if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
+        msgtoA = "PEER:" + peers['b']['ip'] + ":" + str(peers['b']['port']) + ":" + peers['b']['local_ip'] + ":" + str(peers['b']['local_port'])
+        msgtoB = "PEER:" + peers['a']['ip'] + ":" + str(peers['a']['port']) + ":" + peers['a']['local_ip'] + ":" + str(peers['a']['local_port'])
+
+        print(msgtoA)
         while True:
-            msgtoA = "PEER:" + peers['b']['ip'] + ":" + str(peers['b']['port']) + ":" + peers['b']['local_ip'] + ":" + str(peers['b']['local_port'])
-            print(msgtoA)
-            msgtoB = "PEER:" + peers['a']['ip'] + ":" + str(peers['a']['port']) + ":" + peers['a']['local_ip'] + ":" + str(peers['a']['local_port'])
-            print(msgtoB)
             udpServerSock.sendto(msgtoA.encode(), (peers['a']['ip'], peers['a']['port']))
+            data, client_addr = udpServerSock.recvfrom(1024)
+            data = data.decode()
+            if data == "CONFIG_OK":
+                break
+
+        print(msgtoB)
+        while True:
             udpServerSock.sendto(msgtoB.encode(), (peers['b']['ip'], peers['b']['port']))
             data, client_addr = udpServerSock.recvfrom(1024)
-            data=data.decode()
-            if data=="CONFIG_OK":
+            data = data.decode()
+            if data == "CONFIG_OK":
                 break
 
         peersNotified = True

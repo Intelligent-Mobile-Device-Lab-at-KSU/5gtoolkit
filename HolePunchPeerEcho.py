@@ -87,23 +87,63 @@ print(peer_addr)
 print(peer_local_addr)
 
 th_keepalive.start()
-#if username == 'a':
-print("Peer logged in.")
-udpClientSock.settimeout(5)
-while True:
-    udpClientSock.sendto(str.encode("hello"), peer_addr)
-    udpClientSock.sendto(str.encode("hello"), peer_local_addr)
-    print("Sent hello...")
-    try:
-        data, the_addr = udpClientSock.recvfrom(1024)
-        data = data[0].decode()
-        if data == "hello":
-            udpClientSock.sendto(str.encode("READY"), the_addr)
-            break
-    except:
-        g=1
-    time.sleep(5)
 
+print("Peer logged in.")
+txyes = False
+rxyes = False
+def udp_hole_rx():
+    global udpClientSock
+    global peer_addr
+    global txyes
+    udpClientSock.settimeout(5)
+    while True:
+        try:
+            data, peer_addr = udpClientSock.recvfrom(1024)
+            data = data[0].decode()
+            if data == "hello":
+                udpClientSock.sendto(str.encode("READY"), peer_addr)
+                break
+        except:
+            g = 1
+        time.sleep(1)
+    txyes = True
+
+def udp_hole_tx():
+    global udpClientSock
+    global peer_addr
+    global rxyes
+    udpClientSock.settimeout(5)
+    while True:
+        udpClientSock.sendto(str.encode("hello"), peer_addr)
+        print("Sent hello...")
+        try:
+            data, the_addr = udpClientSock.recvfrom(1024)
+            data = data[0].decode()
+            if data == "READY":
+                udpClientSock.sendto(str.encode("READY"), peer_addr)
+                break
+        except:
+            g=1
+        time.sleep(1)
+    rxyes = True
+
+if username == 'a':
+    th_udp_tx = threading.Thread(name='udp_hole_tx', target=udp_hole_tx, args=())
+    th_udp_tx.start()
+    while True:
+        if txyes:
+            th_udp_tx.join()
+            break
+        time.sleep(1)
+
+elif username == 'b':
+    th_udp_rx = threading.Thread(name='udp_hole_rx', target=udp_hole_rx, args=())
+    th_udp_rx.start()
+    while True:
+        if rxyes:
+            th_udp_rx.join()
+            break
+        time.sleep(1)
 
 udpClientSock.settimeout(None)
 print("Hole-Punch system ready.")

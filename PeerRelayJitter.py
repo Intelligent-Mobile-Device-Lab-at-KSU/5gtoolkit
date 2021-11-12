@@ -97,16 +97,17 @@ if username == 'a':
 
         print("Done. Awaiting Stats From Peer...")
         udpClientSock.sendto(str.encode("done"), server_addr)
-        respFromServer = udpClientSock.recvfrom(1024)
-        stats = json.loads(respFromServer[0].decode())
+        respFromPeer = udpClientSock.recvfrom(1024)
+        print(respFromPeer[0].decode())
+        stats = json.loads(respFromPeer[0].decode())
 
         if stats["error"]:
             print("Divide by zero error at the Server. Maybe decrease the packet size? Try again.")
             print('\n')
             x = input("Run again with new packet size (type n to end): ")
             if x == "n":
-                print("Sending B: done, message.")
-                udpClientSock.sendto(str.encode("done:a"), server_addr)
+                print("Sending B: stop, message.")
+                udpClientSock.sendto(str.encode("stop"), server_addr)
                 udpClientSock.close()
                 break
             else:
@@ -161,6 +162,7 @@ elif username == 'b':
                     timeOutNotSet = False
                     udpClientSock.settimeout(5)
                 data = data[0].decode()
+                print(data)
                 if data == "keep-alive":
                     continue
                 elif data == "done":
@@ -200,6 +202,7 @@ elif username == 'b':
                     totalBytesRecvd = 0
                     epochs = []
                 else:
+                    # Clock receive time of arrival
                     epochs.append(time.time())
                     pktnumber += 1
             except:

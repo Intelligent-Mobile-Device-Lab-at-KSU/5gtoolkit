@@ -65,12 +65,13 @@ while ("PEER" not in respFromServer):
 
 udpClientSock.sendto(str.encode("CONFIG_OK"), server_addr)
 peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
+print(peer_addr)
 print("Peer found. Hole-Punch system ready.")
 
 # Device 1 should be logged into relay server as: a
 if username == 'a':
     print("Ensure b displays \"Listening for packets...\" then when ready...")
-    x=input("The press any key to begin delay test through Rendezvous Relay Server...")
+    x=input("Press any key to begin delay test through Rendezvous Relay Server...")
     while True:
         print('Sending Packets')
         pktnumber = 0

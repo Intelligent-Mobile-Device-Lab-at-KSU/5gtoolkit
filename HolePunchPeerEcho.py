@@ -84,21 +84,17 @@ if username == 'a':
         udpClientSock.sendto(str.encode("HELLO"), peer_addr)
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        print(data)
         if data == "READY":
             break
-        time.sleep(1)
 
 if username == 'b':
     print("Peer logged in. Awaiting contact from peer...")
     while True:
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        print(data)
         if data == "HELLO":
             udpClientSock.sendto(str.encode("READY"), peer_addr)
             break
-        time.sleep(1)
 
 print("Hole-Punch system ready.")
 

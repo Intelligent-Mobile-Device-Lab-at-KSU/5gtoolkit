@@ -88,9 +88,10 @@ while True:
     udpClientSock.sendto(str.encode("hello"), peer_addr)
     print("Sent hello...")
     try:
-        data = udpClientSock.recvfrom(1024)
+        data, the_addr = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        if data == "READY":
+        if data == "hello":
+            udpClientSock.sendto(str.encode("READY"), the_addr)
             break
     except:
         g=1

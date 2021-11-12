@@ -104,7 +104,7 @@ if username == 'b':
     while ("hello" not in respFromPeer):
         udpClientSock.sendto(str.encode("0"), peer_addr)
         respFromServer, theaddr = udpClientSock.recvfrom(1024)
-        respFromServer = respFromServer[0].decode()
+        respFromServer = respFromServer.decode()
     print(theaddr)
     udpClientSock.sendto(str.encode("READY"), peer_addr)
 

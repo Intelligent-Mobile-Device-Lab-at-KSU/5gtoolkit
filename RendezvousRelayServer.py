@@ -7,7 +7,7 @@
 # a. RendezvousRelayServer:
 #       Client A Sends: login, the RendezvousRelayServer will save the remote IP and port of the client A.
 #       Client B sends: login, the RendezvousRelayServer will save the remote IP and port of the client B.
-#       RendezvousRelayServer simply forwards the
+#       RendezvousRelayServer simply forwards the echo packet ('0') from A to B, then B to A.
 
 # The purpose of this app is to measure the Layer 7 peer-to-peer delay from A<->RendezvousRelayServer<->B.
 

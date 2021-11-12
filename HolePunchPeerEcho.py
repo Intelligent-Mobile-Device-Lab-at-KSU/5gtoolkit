@@ -116,7 +116,7 @@ if username == 'b':
             g=1
     print(theaddr)
     udpClientSock.sendto(str.encode("READY"), peer_addr)
-
+udpClientSock.settimeout(None)
 print("Hole-Punch system ready.")
 # Device 1 should be logged into relay server as: a
 if username == 'a':

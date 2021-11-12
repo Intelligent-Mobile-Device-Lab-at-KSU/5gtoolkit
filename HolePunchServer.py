@@ -91,8 +91,10 @@ while True:
 
     # User a is done.
     if data_ctrl_msg[0] == "done" or data_ctrl_msg[0] == "logout":
-        udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
-        udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['b']['port']))
+        if peers['b']['port']>0:
+            udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
+        if peers['a']['port'] > 0:
+            udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['a']['port']))
         keepthreadalive = False
         peersNotified = False
         peers = {

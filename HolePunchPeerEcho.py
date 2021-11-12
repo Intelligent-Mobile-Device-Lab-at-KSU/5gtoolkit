@@ -97,8 +97,8 @@ if username == 'a':
         udpClientSock.sendto(tmp_str.encode(), server_addr)
         udpClientSock.sendto(str.encode("hello"), peer_addr)
         try:
-            respFromServer = udpClientSock.recvfrom(1024)
-            respFromServer = respFromServer[0].decode()
+            respFromPeer = udpClientSock.recvfrom(1024)
+            respFromPeer = respFromPeer[0].decode()
         except:
             g=1
 
@@ -110,8 +110,8 @@ if username == 'b':
         udpClientSock.sendto(tmp_str.encode(), server_addr)
         udpClientSock.sendto(str.encode("0"), peer_addr)
         try:
-            respFromServer, theaddr = udpClientSock.recvfrom(1024)
-            respFromServer = respFromServer.decode()
+            respFromPeer, theaddr = udpClientSock.recvfrom(1024)
+            respFromPeer = respFromPeer.decode()
         except:
             g=1
     print(theaddr)

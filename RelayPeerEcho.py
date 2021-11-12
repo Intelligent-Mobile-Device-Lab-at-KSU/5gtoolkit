@@ -66,6 +66,7 @@ udpClientSock.sendto(str.encode("OK"), server_addr)
 
 print("Peer found. Echo system ready.")
 
+# Device 1 should be logged into relay server as: a
 if username == 'a':
     print("Ensure b displays \"Listening for packets...\" then when ready...")
     x=input("The press any key to begin delay test through Rendezvous Relay Server...")
@@ -101,12 +102,14 @@ if username == 'a':
             print('\n')
             x=input("Run again? (y/n)")
             if x == "n":
+                print("Sending B: done, message.")
                 udpClientSock.sendto(str.encode("done:a"), server_addr)
                 udpClientSock.close()
                 break
             elif x=="y":
                 continue
 
+# Device 2 should be logged into relay server as: b
 elif username == 'b':
     print("WARNING: Ensure b shows: \"Listening for packets...\", before running a")
     x=input("Press any key to receiving packets...")

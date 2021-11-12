@@ -55,7 +55,7 @@ signal.signal(signal.SIGINT, signal_handler)
 def udp_hole_keepalive():
     while True:
         udpClientSock.sendto(str("keep-alive").encode(), server_addr)
-        time.sleep(.1)
+        time.sleep(10)
 
 th_keepalive = threading.Thread(name='udp_hole_keepalive',target=udp_hole_keepalive, args=())
 
@@ -83,12 +83,12 @@ if username == 'a':
     print("Peer logged in.")
     udpClientSock.settimeout(1)
     while True:
-        udpClientSock.sendto(str.encode("hello"), peer_addr)
+        udpClientSock.sendto(str.encode("13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23"), peer_addr)
         print("Sent hello...")
         try:
             data = udpClientSock.recvfrom(1024)
             data = data[0].decode()
-            if data == "READY":
+            if data == "READYREADYREADYREADYREADYREADYREADY":
                 break
         except:
             time.sleep(1)
@@ -99,8 +99,8 @@ if username == 'b':
     while True:
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        if data == "hello":
-            udpClientSock.sendto(str.encode("READY"), peer_addr)
+        if data == "13123u123uh12ub31kjb23kj1b23kjb12k3jb1kj2b3k1jb23":
+            udpClientSock.sendto(str.encode("READYREADYREADYREADYREADYREADYREADY"), peer_addr)
             break
 
 udpClientSock.settimeout(None)

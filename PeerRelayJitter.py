@@ -178,7 +178,6 @@ elif username == 'b':
                     i = 0
                     delays = []
                     L = len(epochs)
-                    print(epochs)
                     while i <= L - 2:
                         delays.append(epochs[i + 1] - epochs[i])
                         i += 1
@@ -207,12 +206,12 @@ elif username == 'b':
                     udpClientSock.sendto(json.dumps(ojson).encode(), server_addr)
                     totalBytesRecvd = 0
                     epochs = []
+                    pktnumber = 0
                     print("Listening for more measurements from A...")
                 else:
                     # Clock receive time of arrival
                     epochs.append(time.time())
                     pktnumber += 1
-                    print(pktnumber)
             except:
                 print("Halted.")
                 print("Listening for RPJ message from A...")

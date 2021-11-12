@@ -81,30 +81,21 @@ peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
 print(peer_addr)
 
 th_keepalive.start()
-if username == 'a':
-    print("Peer logged in.")
-    udpClientSock.settimeout(1)
-    while True:
-        udpClientSock.sendto(str.encode("hello"), peer_addr)
-        print("Sent hello...")
-        try:
-            data = udpClientSock.recvfrom(1024)
-            data = data[0].decode()
-            if data == "READY":
-                break
-        except:
-            time.sleep(1)
-        time.sleep(1)
-
-if username == 'b':
-    print("Peer logged in. Awaiting contact from peer...")
-    while True:
+#if username == 'a':
+print("Peer logged in.")
+udpClientSock.settimeout(.5)
+while True:
+    udpClientSock.sendto(str.encode("hello"), peer_addr)
+    print("Sent hello...")
+    try:
         data = udpClientSock.recvfrom(1024)
         data = data[0].decode()
-        if data == "hello":
-            udpClientSock.sendto(str.encode("READY"), peer_addr)
+        if data == "READY":
             break
-        time.sleep(.1)
+    except:
+        g=1
+    time.sleep(.5)
+
 
 udpClientSock.settimeout(None)
 print("Hole-Punch system ready.")

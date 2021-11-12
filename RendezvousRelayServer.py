@@ -105,16 +105,15 @@ while True:
         if data_ctrl_msg[1] == "a":
             peers['a']['ip']=client_addr[0]
             peers['a']['port'] = client_addr[1]
+            print(peers)
         elif data_ctrl_msg[1] == "b":
             peers['b']['ip'] = client_addr[0]
             peers['b']['port'] = client_addr[1]
+            print(peers)
 
-        for i in range(100):
-            udpServerSock.sendto(str("OK").encode(), client_addr)
-            time.sleep(.1)
+        udpServerSock.sendto(str("OK").encode(), client_addr)
 
     if (not peersNotified) and ((peers['b']['port'] > 0) and (peers['a']['port'] > 0)):
-        print(peers)
         udpServerSock.sendto(str("PEER").encode(), (peers['a']['ip'], peers['a']['port']))
         udpServerSock.sendto(str("PEER").encode(), (peers['b']['ip'], peers['b']['port']))
         peersNotified = True

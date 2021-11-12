@@ -73,7 +73,6 @@ th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=()
 
 peersNotified = False
 th_keepalive.start()
-keepthreadalive = True
 while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
@@ -118,6 +117,7 @@ while True:
         continue
 
     if data_ctrl_msg[0] == "login":
+        keepthreadalive = True
         if data_ctrl_msg[1] == "a":
             peers['a']['ip']=client_addr[0]
             peers['a']['port'] = client_addr[1]

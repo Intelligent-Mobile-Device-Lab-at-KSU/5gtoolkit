@@ -25,6 +25,9 @@ import time
 import json
 import threading
 
+hostname = socket.gethostname()
+local_ip = socket.gethostbyname(hostname)
+
 f = open('config.json',)
 conf = json.load(f)
 f.close()
@@ -63,10 +66,11 @@ th_keepalive = threading.Thread(name='udp_hole_keepalive',target=udp_hole_keepal
 
 
 udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
+
 print("Logging In To Hole-Punch Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
-    udpClientSock.sendto(str.encode("login:" + username), server_addr)
+    udpClientSock.sendto(str.encode("login:" + username + ":" + local_ip + ":" + udpClientSock.getsockname()[1]), server_addr)
     respFromServer = udpClientSock.recvfrom(1024)
     respFromServer = respFromServer[0].decode()
 
@@ -78,7 +82,9 @@ while ("PEER" not in respFromServer):
 
 udpClientSock.sendto(str.encode("CONFIG_OK"), server_addr)
 peer_addr = (respFromServer.split(":")[1], int(respFromServer.split(":")[2]))
+peer_local_addr = (respFromServer.split(":")[3], int(respFromServer.split(":")[4]))
 print(peer_addr)
+print(peer_local_addr)
 
 th_keepalive.start()
 #if username == 'a':
@@ -86,6 +92,7 @@ print("Peer logged in.")
 udpClientSock.settimeout(5)
 while True:
     udpClientSock.sendto(str.encode("hello"), peer_addr)
+    udpClientSock.sendto(str.encode("hello"), peer_local_addr)
     print("Sent hello...")
     try:
         data, the_addr = udpClientSock.recvfrom(1024)

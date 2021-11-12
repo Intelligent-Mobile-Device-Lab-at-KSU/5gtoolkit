@@ -71,7 +71,7 @@ print("Peer found. Hole-Punch system ready.")
 # Device 1 should be logged into relay server as: a
 if username == 'a':
     print("Ensure b displays \"Listening for packets...\" then when ready...")
-    x=input("Press any key to begin delay test through Rendezvous Relay Server...")
+    x=input("Press any key to begin delay test through NAT Hole-Punch...")
     while True:
         print('Sending Packets')
         pktnumber = 0

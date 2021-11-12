@@ -168,9 +168,6 @@ elif username == 'b':
         else: # RPJ running
             try:
                 data = udpClientSock.recvfrom(packetSizeInBytes)
-                if timeOutNotSet:
-                    timeOutNotSet = False
-                    udpClientSock.settimeout(5)
                 data = data[0].decode()
                 if data == "keep-alive":
                     continue
@@ -219,6 +216,9 @@ elif username == 'b':
                     # Clock receive time of arrival
                     epochs.append(time.time())
                     pktnumber += 1
+                    if timeOutNotSet:
+                        timeOutNotSet = False
+                        udpClientSock.settimeout(5)
             except:
                 print("Halted.")
                 print("Listening for RPJ message from A...")

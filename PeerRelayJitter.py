@@ -106,6 +106,7 @@ if username == 'a':
                 break
             except:
                 continue
+        udpClientSock.sendto(str.encode("0"), server_addr)
 
         if stats["error"]:
             print("Divide by zero error at the Server. Maybe decrease the packet size? Try again.")
@@ -178,6 +179,7 @@ elif username == 'b':
                     i = 0
                     delays = []
                     L = len(epochs)
+                    print(epochs)
                     while i <= L - 2:
                         delays.append(epochs[i + 1] - epochs[i])
                         i += 1
@@ -211,6 +213,7 @@ elif username == 'b':
                     # Clock receive time of arrival
                     epochs.append(time.time())
                     pktnumber += 1
+                    print(pktnumber)
             except:
                 print("Halted.")
                 print("Listening for RPJ message from A...")

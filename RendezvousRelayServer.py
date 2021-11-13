@@ -85,7 +85,7 @@ while True:
                 'port': 0
             }
         }
-        print('Logged all users out.')
+        print('Logged all users out. CHECKSTATUS')
         print("Peer Relay Server listening on " + server_addr[0] + ":" + str(server_addr[1]))
         continue
 
@@ -107,7 +107,7 @@ while True:
                 'port': 0
             }
         }
-        print('Logged all users out.')
+        print('Logged all users out. DONE or LOGOUT')
         print("Peer Relay Server listening on " + server_addr[0] + ":" + str(server_addr[1]))
         continue
 

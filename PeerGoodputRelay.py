@@ -104,27 +104,18 @@ if username == 'a':
 
         print("Done. Awaiting Stats From Peer...")
         stats = []
-        print("flag0")
         while True:
-            print("flag1")
             udpClientSock.sendto(str.encode("peer_finish"), server_addr)
-            print("flag2")
             data = udpClientSock.recvfrom(1024)
             data = data[0].decode()
             if data == "keep-alive":
                 continue
-            print("flag3")
-            print(data)
             try:
-                print("flag4")
                 stats = json.loads(data)
-                print("flag5")
                 break
             except:
-                print("flag6")
                 continue
 
-        print("flag7")
         print("Stats Received.")
 
         totalBytesRecvd = stats["totalBytesRecvd"]

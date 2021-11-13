@@ -7,9 +7,11 @@
 # a. RendezvousRelayServer:
 #       Client A Sends: login, the RendezvousRelayServer will save the remote IP and port of the client A.
 #       Client B sends: login, the RendezvousRelayServer will save the remote IP and port of the client B.
-#       RendezvousRelayServer simply forwards the echo packet ('0') from A to B, then B to A.
+#       RendezvousRelayServer simply forwards the packets from A to B or B to A.
+#       RendezvousRelayServer latches the connections by sending keep-alive messages.
 
-# The purpose of this app is to measure the Layer 7 peer-to-peer delay from A<->RendezvousRelayServer<->B.
+# The purpose of this app is to facilitate Layer 7 peer-to-peer measurements (latency, jitter, delay)
+# from A<->RendezvousRelayServer<->B.
 
 # The intended use is to run this app on a server.
 
@@ -67,7 +69,7 @@ th_keepalive = threading.Thread(name='UDPkeepalive',target=UDPkeepalive, args=()
 
 peersNotified = False
 while True:
-    data, client_addr = udpServerSock.recvfrom(1024)
+    data, client_addr = udpServerSock.recvfrom(65507)
     data_ctrl_msg = data.decode().split(":")
 
     if data_ctrl_msg[0] == "checkstatus" and data_ctrl_msg[1] == "a":
@@ -90,7 +92,7 @@ while True:
     # User a is done.
     if data_ctrl_msg[0] == "done" or data_ctrl_msg[0] == "logout":
         udpServerSock.sendto(str("done").encode(), (peers['b']['ip'], peers['b']['port']))
-        udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['b']['port']))
+        udpServerSock.sendto(str("done").encode(), (peers['a']['ip'], peers['a']['port']))
         keepthreadalive = False
         peersNotified = False
         peers = {

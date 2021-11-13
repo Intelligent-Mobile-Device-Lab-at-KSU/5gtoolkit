@@ -87,6 +87,7 @@ if username == 'a':
                 respFromPeer = udpClientSock.recvfrom(65507)
             except:
                 udpClientSock.settimeout(None)
+            udpClientSock.settimeout(None)
             print('Peer ready.')
             print("Ensure b displays \"Listening for packets...\" then when ready...")
             break

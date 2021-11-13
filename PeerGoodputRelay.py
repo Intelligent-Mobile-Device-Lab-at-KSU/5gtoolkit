@@ -86,7 +86,7 @@ if username == 'a':
             print("Ensure b displays \"Listening for packets...\" then when ready...")
             break
 
-    x = input("Press any key to begin peer jitter test through Rendezvous Relay Server...")
+    x = input("Press any key to begin peer Goodput test through Rendezvous Relay Server...")
     while True:
         print('Measurement in progress...')
         totalPacketsSent = 0
@@ -98,42 +98,51 @@ if username == 'a':
 
         print("Done. Awaiting Stats From Peer...")
         stats = []
+        print("flag0")
         while True:
+            print("flag1")
             udpClientSock.sendto(str.encode("peer_finish"), server_addr)
+            print("flag2")
             data = udpClientSock.recvfrom(1024)
             data = data[0].decode()
+            print("flag3")
+            print(data)
             try:
+                print("flag4")
                 stats = json.loads(data)
+                print("flag5")
                 break
             except:
+                print("flag6")
                 continue
 
-            print("Stats Received.")
+        print("flag7")
+        print("Stats Received.")
 
-            totalBytesRecvd = stats["totalBytesRecvd"]
-            numberOfPackets = stats["numberOfPackets"]
+        totalBytesRecvd = stats["totalBytesRecvd"]
+        numberOfPackets = stats["numberOfPackets"]
 
-            goodput = totalBytesRecvd / durationOfTestInSeconds
-            numberOfPackets = totalBytesRecvd / packetSizeInBytes
-            packetReceptionRate = (numberOfPackets / totalPacketsSent) * 100
+        goodput = totalBytesRecvd / durationOfTestInSeconds
+        numberOfPackets = totalBytesRecvd / packetSizeInBytes
+        packetReceptionRate = (numberOfPackets / totalPacketsSent) * 100
 
-            print("Phone Uploaded to Peer: " + str(totalPacketsSent) + " packets")
-            print("Goodput (raw): %s bytes" % (goodput))
-            print("Goodput (Megabitsps): %s " % ((goodput * 8) / (1e6)))
-            print("Goodput (MegaBytesps): %s " % ((goodput) / (1e6)))
-            print("Number of Packets Received by Peer: " + str(numberOfPackets))
-            print("Packet Reception Rate: " + str(packetReceptionRate) + "%")
-            print('\n')
+        print("Phone Uploaded to Peer: " + str(totalPacketsSent) + " packets")
+        print("Goodput (raw): %s bytes" % (goodput))
+        print("Goodput (Megabitsps): %s " % ((goodput * 8) / (1e6)))
+        print("Goodput (MegaBytesps): %s " % ((goodput) / (1e6)))
+        print("Number of Packets Received by Peer: " + str(numberOfPackets))
+        print("Packet Reception Rate: " + str(packetReceptionRate) + "%")
+        print('\n')
 
-            x = input("Run again? (y/n)")
-            if x == "n":
-                print("Sending B: close, message and Server done (logout) message.")
-                udpClientSock.sendto(str.encode("peer_close"), server_addr)
-                udpClientSock.sendto(str.encode("done:a"), server_addr)
-                udpClientSock.close()
-                break
-            elif x == "y":
-                continue
+        x = input("Run again? (y/n)")
+        if x == "n":
+            print("Sending B: close, message and Server done (logout) message.")
+            udpClientSock.sendto(str.encode("peer_close"), server_addr)
+            udpClientSock.sendto(str.encode("done:a"), server_addr)
+            udpClientSock.close()
+            break
+        elif x == "y":
+            continue
 
 
 # Device 2 should be logged into rendezvous server as: b

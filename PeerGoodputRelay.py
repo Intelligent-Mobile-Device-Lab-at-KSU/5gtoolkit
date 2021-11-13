@@ -82,6 +82,11 @@ if username == 'a':
         if respFromPeer == "keep-alive":
             continue
         elif respFromPeer == "OK":
+            udpClientSock.settimeout(1)
+            try:
+                respFromPeer = udpClientSock.recvfrom(65507)
+            except:
+                udpClientSock.settimeout(None)
             print('Peer ready.')
             print("Ensure b displays \"Listening for packets...\" then when ready...")
             break
@@ -105,6 +110,8 @@ if username == 'a':
             print("flag2")
             data = udpClientSock.recvfrom(1024)
             data = data[0].decode()
+            if data == "keep-alive":
+                continue
             print("flag3")
             print(data)
             try:

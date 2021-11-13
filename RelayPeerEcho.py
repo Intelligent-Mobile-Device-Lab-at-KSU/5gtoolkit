@@ -49,12 +49,13 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-udpClientSock.sendto(str.encode("logout:" + username), server_addr)
+udpClientSock.sendto(str.encode("checkstatus:" + username), server_addr)
 print("Logging In To Rendezvous Relay Server as username: " + username + "...")
 respFromServer=''
 while ("OK" not in respFromServer):
     udpClientSock.sendto(str.encode("login:" + username), server_addr)
     respFromServer = udpClientSock.recvfrom(1024)
+    respFromServer = respFromServer[0].decode()
     respFromServer = respFromServer[0].decode()
 
 respFromServer=''

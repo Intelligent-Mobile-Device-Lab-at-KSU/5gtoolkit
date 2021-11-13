@@ -71,7 +71,7 @@ peersNotified = False
 while True:
     data, client_addr = udpServerSock.recvfrom(65507)
     data_ctrl_msg = data.decode().split(":")
-    print(data_ctrl_msg)
+    
     if data_ctrl_msg[0] == "checkstatus" and data_ctrl_msg[1] == "a":
         keepthreadalive = False
         peersNotified = False

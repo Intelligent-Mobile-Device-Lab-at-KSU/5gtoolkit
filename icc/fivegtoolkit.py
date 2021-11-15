@@ -90,6 +90,10 @@ argumentType3_duration_endpointtest = ["3","4","5", "6"]
 argumentType4_duration_peer = ["8","9","b","c"]
 
 print(platform.system())
+print(platform.architecture())
+print(platform.machine())
+print(platform.node())
+print(platform.processor())
 
 pthonver = 'python'
 if len(sys.argv) == 2:

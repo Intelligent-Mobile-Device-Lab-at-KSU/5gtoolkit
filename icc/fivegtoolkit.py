@@ -89,18 +89,15 @@ argumentType2_echo_relayorholepunch = ["7", "a"]
 argumentType3_duration_endpointtest = ["3","4","5", "6"]
 argumentType4_duration_peer = ["8","9","b","c"]
 
-print(platform.system())
-print(platform.architecture())
-print(platform.machine())
-print(platform.node())
-print(platform.processor())
-
-pthonver = 'python'
-if len(sys.argv) == 2:
+if platform.system() == "Linux" and platform.machine() == "aarch64":
+    pthonver = 'python'
+elif platform.system() == "Linux":
     pthonver = 'python3'
+elif platform.system() == "Windows":
+    windowsPythonPath = "C:\\Users\\bkihei\\PycharmProjects\\5gtoolkit\\venv\\Scripts\\python.exe"
+    pthonver = windowsPythonPath
 
-#windowsPythonPath = "C:\\Users\\bkihei\\PycharmProjects\\5gtoolkit\\venv\\Scripts\\python.exe"
-#pthonver=windowsPythonPath
+
 print(pthonver)
 
 command = ''
@@ -112,7 +109,6 @@ while True:
         "duration": 0
     }
     options = menu.keys()
-    print(options)
     availOptions = []
     for entry in options:
         availOptions.append(entry)

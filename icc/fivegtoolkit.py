@@ -129,7 +129,7 @@ while True:
             if y[0] == 'a':
                 params["username"] = 'a'
                 params["pktsize"] = y[1]
-                params["duration"] = y[2]
+                params["numpkts"] = y[2]
                 command = "{} {} {} {}".format(command, params["username"], params["pktsize"], params["numpkts"])
             else:
                 params["username"] = 'b'
@@ -183,7 +183,7 @@ while True:
                 if y[0] == 'a':
                     params["username"] = 'a'
                     params["pktsize"] = y[1]
-                    params["duration"] = y[2]
+                    params["numpkts"] = y[2]
                     command = "{} {} {} {}".format(command, params["username"], params["pktsize"], params["numpkts"])
                 else:
                     params["username"] = 'b'

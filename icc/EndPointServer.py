@@ -69,10 +69,28 @@ def UDPServerSocket_halt_listener():
 th_halt_udp = threading.Thread(name='UDPServerSocket_halt_listener', target=UDPServerSocket_halt_listener, args=())
 th_halt_udp.start()
 
+isEchoRunning = False
+echo_pktsize = 0
 while True:
     data, client_addr = udpServerSock.recvfrom(1024)
     data_ctrl_msg = data.decode().split(":")
-    if data_ctrl_msg[0] == "GDR" or data_ctrl_msg[0] == "DJ":
+
+    if isEchoRunning:
+        if ("ECHO" not in data_ctrl_msg[0]):
+            udpServerSock.sendto(data, client_addr)
+        else:
+            print(data_ctrl_msg[0] + " done.")
+            print("Listening...")
+            isEchoRunning = False
+            echo_pktsize = 0
+        continue
+
+    elif data_ctrl_msg[0] == "ECHO" and data_ctrl_msg[1] == "start":
+        print("Initiating " + data_ctrl_msg[0] + "...")
+        echo_pktsize = int(data_ctrl_msg[2])
+        isEchoRunning = True
+        continue
+    elif data_ctrl_msg[0] == "GDR" or data_ctrl_msg[0] == "DJ":
         print("Initiating " + data_ctrl_msg[0] + "...")
         pktnumber = 0
         pktSize = int(data_ctrl_msg[1])

@@ -1,10 +1,10 @@
-# Echo_RTT_Client.py
+# EndPoint_RTT.py
 # Billy Kihei (c) 2021
 # Intelligent Mobile Device Lab @ Kennesaw State University
 # Part of the 5Gtoolkit for testing commercial 5G networks.
 
-# This app measures the Layer 7 delay to send a packet to the UDP echo server.
-# The purpose of this app is to measure the Layer 7 round trip time from this phone to the echo server.
+# This app measures the Layer 7 delay to send a packet to the UDP EndPointServer.
+# The purpose of this app is to measure the Layer 7 round trip time from this phone to the EndPointServer.
 
 # The intended use is to run this app in Termux.
 # Provide the number of times you would like to run this application.
@@ -12,8 +12,8 @@
 
 # 1. Open Termux.
 # 2. Download the 5gtoolkit git repo.
-# 3. Edit the config.json file so that echo server ip and port are correct.
-# 4. python Echo_RTT_Client.py <pktsize> <#ofpackets>
+# 3. Edit the config.json file so that end point server ip and port are correct.
+# 4. python EndPoint_RTT.py <pktsize> <#ofpackets>
 
 import socket
 import sys
@@ -32,7 +32,7 @@ if len(sys.argv) == 3:
     pktsize = int(pktsize_str)
     NumTimesToRun = int(sys.argv[2])
 else:
-    print('Not enough arguments, \nusage: python Echo_RTT_Client.py <pktsize> <#ofpackets>')
+    print('Not enough arguments, \nusage: python EndPoint_RTT.py <pktsize> <#ofpackets>')
     sys.exit(0)
 
 pktnumber=0
@@ -49,7 +49,7 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
-print('Sending ECHO Request to Relay Server...')
+print('Sending ECHO Request to EndPointServer...')
 udpClientSock.sendto(str.encode("ECHO:"+pktsize_str), server_addr)
 respFromServer = udpClientSock.recvfrom(65507)
 print('Server ready.')

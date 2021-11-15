@@ -118,13 +118,13 @@ while True:
     if selection in availOptions:
         command = '{} {}'.format(pthonver, menu[selection])
         if selection in argumentType1_echo_endpointtest:
-            y=input("Please input: <pktsize> <#ofpkts>: ")
+            y=input("Please input: <pktsize> <numpkts>: ")
             y=y.split(" ")
             params["pktsize"] = y[0]
             params["numpkts"] = y[1]
             command = "{} {} {}".format(command, params["pktsize"], params["numpkts"])
         elif selection in argumentType2_echo_relayorholepunch:
-            y = input("Please input: a|b <pktsize> <duration>: ")
+            y = input("Please input: a|b <pktsize> <numpkts>: ")
             y = y.split(" ")
             if y[0] == 'a':
                 params["username"] = 'a'

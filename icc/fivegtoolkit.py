@@ -16,7 +16,7 @@
 # 	1. NetworkSounder.py
 #
 # B - Device to EndPointServer test
-# 	2. Echo_RTT_Client.py <pktsize> <#pkts>
+# 	2. EndPoint_RTT.py <pktsize> <#pkts>
 # 	3. EndPoint_DL_Goodput.py <pktsize> <duration>
 # 	4. EndPoint_UL_Goodput.py <pktsize> <duration>
 # 	5. EndPoint_DL_Jitter.py <pktsize> <duration>
@@ -59,12 +59,13 @@
 import os
 import sys
 import subprocess
+import platform
 
 menu = {}
 menu['m1']="A - Find 5G Towers"
 menu['1']="NetworkSounder.py"
 menu['m2']="B - Device to Relay tests"
-menu['2']="Echo_RTT_Client.py"
+menu['2']="EndPoint_RTT.py"
 menu['3']="EndPoint_DL_Goodput.py"
 menu['4']="EndPoint_UL_Goodput.py"
 menu['5']="EndPoint_DL_Jitter.py"
@@ -87,6 +88,8 @@ argumentType1_echo_endpointtest = ["2"]
 argumentType2_echo_relayorholepunch = ["7", "a"]
 argumentType3_duration_endpointtest = ["3","4","5", "6"]
 argumentType4_duration_peer = ["8","9","b","c"]
+
+print(platform.system())
 
 pthonver = 'python'
 if len(sys.argv) == 2:

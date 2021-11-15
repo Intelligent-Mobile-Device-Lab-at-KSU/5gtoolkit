@@ -89,6 +89,7 @@ while True:
         print("Initiating " + data_ctrl_msg[0] + "...")
         echo_pktsize = int(data_ctrl_msg[1])
         isEchoRunning = True
+        udpServerSock.sendto(str("OK").encode(), client_addr)
         continue
     elif data_ctrl_msg[0] == "GDR" or data_ctrl_msg[0] == "DJ":
         print("Initiating " + data_ctrl_msg[0] + "...")

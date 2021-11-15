@@ -92,8 +92,8 @@ pthonver = 'python'
 if len(sys.argv) == 2:
     pthonver = 'python3'
 
-windowsPythonPath = "C:\\Users\\bkihei\\PycharmProjects\\5gtoolkit\\venv\\Scripts\\python.exe"
-pthonver=windowsPythonPath
+#windowsPythonPath = "C:\\Users\\bkihei\\PycharmProjects\\5gtoolkit\\venv\\Scripts\\python.exe"
+#pthonver=windowsPythonPath
 print(pthonver)
 
 command = ''

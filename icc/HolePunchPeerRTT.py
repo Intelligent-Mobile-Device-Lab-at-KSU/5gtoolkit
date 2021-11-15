@@ -24,6 +24,8 @@ import signal
 import time
 import json
 import threading
+import random
+import string
 
 hostname = socket.gethostname()
 local_ip = socket.gethostbyname(hostname)
@@ -136,7 +138,7 @@ if username == 'a':
         pktnumber = 0
         delays = []
         while (pktnumber < NumTimesToRun):
-            udpClientSock.sendto(str.encode("0"), peer_addr)
+            s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             t = time.time()
             data = udpClientSock.recvfrom(1024)
             if data[0].decode()=="keep-alive":

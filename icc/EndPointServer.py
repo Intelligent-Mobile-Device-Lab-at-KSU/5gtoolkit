@@ -87,7 +87,7 @@ while True:
 
     elif data_ctrl_msg[0] == "ECHO":
         print("Initiating " + data_ctrl_msg[0] + "...")
-        echo_pktsize = int(data_ctrl_msg[2])
+        echo_pktsize = int(data_ctrl_msg[1])
         isEchoRunning = True
         continue
     elif data_ctrl_msg[0] == "GDR" or data_ctrl_msg[0] == "DJ":

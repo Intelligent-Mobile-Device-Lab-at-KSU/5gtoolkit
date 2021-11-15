@@ -85,7 +85,7 @@ while True:
             echo_pktsize = 0
         continue
 
-    elif data_ctrl_msg[0] == "ECHO" and data_ctrl_msg[1] == "start":
+    elif data_ctrl_msg[0] == "ECHO":
         print("Initiating " + data_ctrl_msg[0] + "...")
         echo_pktsize = int(data_ctrl_msg[2])
         isEchoRunning = True

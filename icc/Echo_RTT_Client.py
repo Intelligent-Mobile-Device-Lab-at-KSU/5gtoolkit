@@ -28,7 +28,8 @@ conf = json.load(f)
 f.close()
 
 if len(sys.argv) == 3:
-    pktsize = int(sys.argv[1])
+    pktsize_str = sys.argv[1]
+    pktsize = int(pktsize_str)
     NumTimesToRun = int(sys.argv[2])
 else:
     print('Not enough arguments, \nusage: python Echo_RTT_Client.py <pktsize> <#ofpackets>')
@@ -48,8 +49,8 @@ def signal_handler(sig, frame):
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
-print('Sending UGR Request to Relay Server...')
-udpClientSock.sendto(str.encode("ECHO:0"), server_addr)
+print('Sending ECHO Request to Relay Server...')
+udpClientSock.sendto(str.encode("ECHO:"+pktsize_str), server_addr)
 respFromServer = udpClientSock.recvfrom(65507)
 print('Server ready.')
 print('Measurement in progress...')
@@ -58,12 +59,12 @@ while (pktnumber < NumTimesToRun):
     s = ''.join(random.choice(string.digits) for _ in range(pktsize))
     udpClientSock.sendto(s.encode(), server_addr)
     t = time.time()
-    data = udpClientSock.recvfrom(1024)
+    data = udpClientSock.recvfrom(65507)
     elapsed = time.time() - t
     delays.append(elapsed)
     pktnumber += 1
 
-udpClientSock.sendto(str.encode("ECHO:done"), server_addr)
+udpClientSock.sendto(str.encode("ECHO:finish"), server_addr)
 udpClientSock.close()
 
 if len(delays) == 0:

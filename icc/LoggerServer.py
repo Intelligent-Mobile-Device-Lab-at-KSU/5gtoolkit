@@ -38,8 +38,12 @@ while True:
     try:
         print("connection from " + client_address[0])
         # Receive the data in small chunks and retransmit it
+        noData = False
         while True:
             data = connection.recv(65000)
+            if not data:
+                noData = True
+                break
             data = data.decode().split(":")
             #print("received %s" % (data))
 
@@ -53,13 +57,14 @@ while True:
                 # log data
                 print(data[0])
                 connection.sendall(str("DONE").encode())
-                print("closing connection")
-                connection.close()
-                print("saving file")
-                break
 
             if data == "RUNALL":
                 runAll = True
+
+        if noData:
+            print("closing connection")
+            connection.close()
+            print("saving file")
 
     finally:
         # Clean up the connection

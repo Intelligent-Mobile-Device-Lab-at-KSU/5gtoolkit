@@ -30,24 +30,37 @@ print("LoggerServer listening on " + server_addr[0] + ":" + str(server_addr[1]))
 
 # Listen for incoming connections
 tcpServerSock.listen(1)
-
+runAll = False
 while True:
     # Wait for a connection
     print("Waiting for a connection...")
     connection, client_address = tcpServerSock.accept()
     try:
         print("connection from " + client_address)
-
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(65000)
-            print("received %s" % (data))
-            if data:
-                connection.sendall(data)
+            data = data.split(":")
+            #print("received %s" % (data))
+
+            if ("NEW_LOG" in data[0]):
+                print("NEW_SCRIPT_LOG")
+                running_fname = data[1]
+                print("fopen with append filename.csv")
+                print(running_fname+"\n")
+                connection.sendall("BEGIN")
             else:
-                print("no more data from " + client_address)
+                # log data
+                print(data[0])
+                connection.sendall("DONE")
+                print("closing connection")
+                connection.close()
+                print("saving file")
                 break
+
+            if data == "RUNALL":
+                runAll = True
+
     finally:
         # Clean up the connection
         connection.close()
-        

@@ -36,7 +36,7 @@ while True:
     print("Waiting for a connection...")
     connection, client_address = tcpServerSock.accept()
     try:
-        print("connection from " + client_address)
+        print("connection from " + client_address[0])
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(65000)

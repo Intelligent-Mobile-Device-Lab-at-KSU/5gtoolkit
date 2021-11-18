@@ -51,7 +51,7 @@ while True:
                 connection.sendall(str("BEGIN").encode())
             else:
                 # log data
-                print(data)
+                print(data[0])
                 connection.sendall(str("DONE").encode())
                 print("closing connection")
                 connection.close()

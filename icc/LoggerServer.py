@@ -40,7 +40,7 @@ while True:
         # Receive the data in small chunks and retransmit it
         while True:
             data = connection.recv(65000)
-            data = data.split(":")
+            data = data.decode().split(":")
             #print("received %s" % (data))
 
             if ("NEW_LOG" in data[0]):
@@ -48,11 +48,11 @@ while True:
                 running_fname = data[1]
                 print("fopen with append filename.csv")
                 print(running_fname+"\n")
-                connection.sendall("BEGIN")
+                connection.sendall(str("BEGIN").encode())
             else:
                 # log data
                 print(data[0])
-                connection.sendall("DONE")
+                connection.sendall(str("DONE").encode())
                 print("closing connection")
                 connection.close()
                 print("saving file")

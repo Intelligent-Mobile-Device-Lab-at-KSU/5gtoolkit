@@ -13,7 +13,7 @@
 # 1. Open Termux.
 # 2. Download the 5gtoolkit git repo.
 # 3. Edit the config.json file so that end point server ip and port are correct.
-# 4. python EndPoint_RTT.py <pktsize> <#ofpackets>
+# 4. python EndPoint_RTT.py <pktsize> <#ofpackets> [log] (log is optional, usually used for the Major Tests.
 
 import socket
 import sys
@@ -27,18 +27,29 @@ f = open('config.json',)
 conf = json.load(f)
 f.close()
 
-if len(sys.argv) == 3:
+log = False
+if len(sys.argv) == 4:
     pktsize_str = sys.argv[1]
     pktsize = int(pktsize_str)
+    NumTimesToRun_str = sys.argv[2]
+    NumTimesToRun = int(sys.argv[2])
+    if sys.argv[3]=="log":
+        log = True
+elif len(sys.argv) == 3:
+    pktsize_str = sys.argv[1]
+    pktsize = int(pktsize_str)
+    NumTimesToRun_str = sys.argv[2]
     NumTimesToRun = int(sys.argv[2])
 else:
-    print('Not enough arguments, \nusage: python EndPoint_RTT.py <pktsize> <#ofpackets>')
+    print('Not enough arguments, \nusage: python EndPoint_RTT.py <pktsize> <#ofpackets> [log]')
     sys.exit(0)
 
 pktnumber=0
 delays = []
+timestamps = []
 
-server_addr = (conf["echo_server"]["ip"], conf["echo_server"]["port"])
+server_addr = (conf["endpoint_server"]["ip"], conf["endpoint_server"]["port"])
+logger_addr = (conf["logger_server"]["ip"], conf["logger_server"]["port"])
 
 udpClientSock= socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
@@ -62,6 +73,7 @@ while (pktnumber < NumTimesToRun):
     data = udpClientSock.recvfrom(65507)
     elapsed = time.time() - t
     delays.append(elapsed)
+    timestamps.append(t)
     pktnumber += 1
 
 udpClientSock.sendto(str.encode("ECHO:finish"), server_addr)
@@ -82,3 +94,42 @@ else:
     print("Std.Dev: " + str(stddev*1000) + "ms")
     print("Min: " + str(themin) + "ms")
     print("Max: " + str(themax) + "ms")
+
+    if log:
+        print("===Logging PLEASE WAIT===")
+        # Create data strings
+        params_string = pktsize_str + "," + NumTimesToRun_str
+        timestamp_string = ' '.join(str(e) for e in timestamps)
+        delays_string = ' '.join(str(e) for e in delays)
+        stats_string = "{},{},{},{},{}".format(str(mu * 1000), str(stddev * 1000), str(themin), str(themax), str(pktnumber))
+        o = "{}\n{}\n{}\n{}\n".format(params_string, timestamps, delays_string, stats_string)
+
+        # Create a TCP/IP socket
+        tcpClientLoggerSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        # Connect the socket to the port where the server is listening
+        print("connecting to LoggerServer...")
+        tcpClientLoggerSock.connect(logger_addr)
+        try:
+            # Send Control Message:
+            o = "NEW_LOG:"+sys.argv[0]
+            print("Sending Ctrl Message: NEW_LOG")
+            tcpClientLoggerSock.sendall(o)
+
+
+            amount_received = 0
+            while True:
+                data = tcpClientLoggerSock.recv(4096)
+                data = data.decode()
+                print("received: " + data)
+                if data == "BEGIN":
+                    print("Sending Data...")
+                    tcpClientLoggerSock.sendall(o)
+                elif data == "DONE":
+                    print("Data Logged.")
+                    print("closing socket")
+                    tcpClientLoggerSock.close()
+                    break
+        finally:
+            print("Something went wrong...")
+            print("closing socket")
+            tcpClientLoggerSock.close()

@@ -1,9 +1,5 @@
 {
-  "echo_server": {
-    "ip": "143.244.159.219",
-    "port": 20000
-  },
-    "relay_server": {
+    "endpoint_server": {
     "ip": "143.244.159.219",
     "port": 20000,
     "halt_port": 20001
@@ -14,6 +10,11 @@
     "halt_port": 20001
   },
     "hole_punch_server": {
+    "ip": "143.244.159.219",
+    "port": 20000,
+    "halt_port": 20001
+  },
+    "logger_server": {
     "ip": "143.244.159.219",
     "port": 20000,
     "halt_port": 20001

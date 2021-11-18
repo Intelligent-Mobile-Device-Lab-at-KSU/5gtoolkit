@@ -4,15 +4,11 @@
 # Part of the 5Gtoolkit for testing commercial 5G networks.
 
 # This app receives control messages from a client and performs the request.
-# a. Client Sends: GDP:100:60, the RelayServer will stream 100 byte packets for 60 seconds.
-
-# The purpose of this app is to measure the Layer 7 one-way Goodput from relay server to client.
-
 # The intended use is to run this app on a server.
 
 # 1. Log into your server.
 # 2. Download the 5gtoolkit git repo.
-# 3. Edit the config.json file so that relay server ip and port are what you desire.
+# 3. Edit the config.json file so that endpoint server ip and port are what you desire.
 # 4. python3 EndPointServer.py
 
 import socket
@@ -28,7 +24,7 @@ f = open('config.json', )
 conf = json.load(f)
 f.close()
 
-server_addr = (conf["relay_server"]["ip"], conf["relay_server"]["port"])
+server_addr = (conf["endpoint_server"]["ip"], conf["endpoint_server"]["port"])
 
 udpServerSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 udpServerSock.bind(server_addr)
@@ -91,7 +87,7 @@ while True:
         isEchoRunning = True
         udpServerSock.sendto(str("OK").encode(), client_addr)
         continue
-    elif data_ctrl_msg[0] == "GDR" or data_ctrl_msg[0] == "DJ":
+    elif data_ctrl_msg[0] == "EDG" or data_ctrl_msg[0] == "EDJ":
         print("Initiating " + data_ctrl_msg[0] + "...")
         pktnumber = 0
         pktSize = int(data_ctrl_msg[1])
@@ -106,8 +102,8 @@ while True:
         print(data_ctrl_msg[0] + " done.")
         print("Listening...")
 
-    if data_ctrl_msg[0] == "UGR":
-        print("Initiating UGR...")
+    if data_ctrl_msg[0] == "EUG":
+        print("Initiating EUG...")
         packetSizeInBytes = int(data_ctrl_msg[1])
         respFromUploader = ''
         totalBytesRecvd = 0
@@ -123,7 +119,7 @@ while True:
             totalBytesRecvd += len(respFromUploader)
 
         udpServerSock.settimeout(None)
-        print("UGR getting stats...")
+        print("EUG getting stats...")
         if not noHalt:
             print("Halted.")
             print("Listening...")
@@ -136,11 +132,11 @@ while True:
         }
 
         udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
-        print("UGR done.")
+        print("EUG done.")
         print("Listening...")
 
-    if data_ctrl_msg[0] == "JU":
-        print("Initiating JU...")
+    if data_ctrl_msg[0] == "EUJ":
+        print("Initiating EUJ...")
         packetSizeInBytes = int(data_ctrl_msg[1])
         respFromUploader = ''
         totalBytesRecvd = 0
@@ -157,7 +153,7 @@ while True:
             respFromUploader = respFromUploader[0].decode()
 
         udpServerSock.settimeout(None)
-        print("JU getting stats...")
+        print("EUJ getting stats...")
         if not noHalt:
             print("Halted.")
             print("Listening...")
@@ -194,5 +190,5 @@ while True:
             "max": themax
         }
         udpServerSock.sendto(json.dumps(ojson).encode(), client_addr)
-        print("JU done.")
+        print("EUJ done.")
         print("Listening...")

@@ -40,7 +40,7 @@ def signal_handler(sig, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 noHalt = True
-server_halt_addr = (conf["relay_server"]["ip"], conf["relay_server"]["halt_port"])
+server_halt_addr = (conf["endpoint_server"]["ip"], conf["endpoint_server"]["halt_port"])
 
 # Create a datagram socket
 UDPServerSocket_halt = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)

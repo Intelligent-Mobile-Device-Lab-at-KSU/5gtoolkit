@@ -139,6 +139,7 @@ if username == 'a':
         delays = []
         while (pktnumber < NumTimesToRun):
             s = ''.join(random.choice(string.digits) for _ in range(pktsize))
+            udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()
             data = udpClientSock.recvfrom(1024)
             if data[0].decode()=="keep-alive":

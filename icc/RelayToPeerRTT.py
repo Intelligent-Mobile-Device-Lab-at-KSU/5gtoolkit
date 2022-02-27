@@ -140,6 +140,18 @@ if username == 'a':
                 udpClientSock.close()
                 break
             elif x=="y":
+                udpClientSock.settimeout(5)
+                print("Emptying buffer, please wait...")
+                while (True):
+                    try:
+                        data = udpClientSock.recvfrom(pktsize)
+                        message = data[0]
+                        address = data[1]
+                        print("Recevied from: %s, %s, %d" % (address[0], address[1],random.randint(0, 100)))
+                    except socket.timeout:
+                        print("Done.")
+                        udpClientSock.settimeout(None)
+                        break
                 continue
 
 # Device 2 should be logged into relay server as: b

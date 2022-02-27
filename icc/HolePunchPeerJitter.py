@@ -249,6 +249,7 @@ elif username == 'b':
                 HPPJrunning = True
         else:  # HP-PJ running
             try:
+                udpClientSock.settimeout(None)
                 data = udpClientSock.recvfrom(packetSizeInBytes)
                 data = data[0].decode()
                 if not STDBY and data == "keep-alive":

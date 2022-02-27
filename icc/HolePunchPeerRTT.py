@@ -133,9 +133,13 @@ print("Emptying buffer, please wait...")
 while (True):
     try:
         data = udpClientSock.recvfrom(pktsize)
+        message = data[0]
+        address = data[1]
+        print("Recevied from: %s, %s" % (address[0], address[1]))
     except socket.timeout:
         print("Done.")
         udpClientSock.settimeout(None)
+        break
 print("Hole-Punch system ready.")
 # Device 1 should be logged into relay server as: a
 if username == 'a':

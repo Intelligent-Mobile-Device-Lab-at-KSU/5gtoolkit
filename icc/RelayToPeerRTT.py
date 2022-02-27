@@ -102,6 +102,8 @@ if username == 'a':
             udpClientSock.sendto(s.encode(), server_addr)
             t = time.time()
             data = udpClientSock.recvfrom(pktsize)
+            if data[0].decode()=="keep-alive":
+                continue
             elapsed=time.time()-t
             delays.append(elapsed)
             pktnumber += 1

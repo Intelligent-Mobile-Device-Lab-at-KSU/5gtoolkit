@@ -138,7 +138,7 @@ while (True):
         print("Recevied from: %s, %s" % (address[0], address[1]))
     except socket.timeout:
         print("Done.")
-        udpClientSock.settimeout(None)
+        udpClientSock.settimeout(0)
         break
 print("Hole-Punch system ready.")
 # Device 1 should be logged into relay server as: a
@@ -201,8 +201,8 @@ elif username == 'b':
     print('Listening for packets...')
     while True:
         data, client_addr = udpClientSock.recvfrom(pktsize)
-        message = data[0]
-        address = data[1]
+        message = data
+        address = client_addr
         print("Recevied from: %s, %s" % (address[0], address[1]))
         if data.decode() == "peer_close":
             udpClientSock.close()

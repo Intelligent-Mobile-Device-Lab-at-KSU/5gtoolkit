@@ -153,13 +153,16 @@ if username == 'a':
             s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()
+            print("Sent Pkt")
             while (True):
                 data = udpClientSock.recvfrom(pktsize)
                 message = data[0]
                 address = data[1]
-                print("Recevied from: %s, %s" % (address[0], address[1]))
-                elapsed=0
+                elapsed=time.time()-t
                 delays.append(elapsed)
+                print("Recevied from: %s, %s, %0.5f" % (address[0], address[1],elapsed))
+                pktnumber += 1
+                break
                 #if data[0].decode()=="keep-alive":
                 #    continue
                 #if elapsed==0.0:

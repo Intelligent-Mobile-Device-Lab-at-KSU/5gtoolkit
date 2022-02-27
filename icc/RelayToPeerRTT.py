@@ -97,6 +97,7 @@ if username == 'a':
         print('Sending Packets')
         pktnumber = 0
         delays = []
+        s = ''.join(random.choice(string.digits) for _ in range(pktsize))
         while (pktnumber < NumTimesToRun):
             udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()

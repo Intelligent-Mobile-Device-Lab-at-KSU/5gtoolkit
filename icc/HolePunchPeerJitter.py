@@ -164,16 +164,18 @@ if username == 'a':
 
         print("Done. Awaiting Stats From Peer...")
         stats = []
+        udpClientSock.settimeout(5)
         while True:
+            print("Attempting to fetch results")
             udpClientSock.sendto(str.encode("peer_finish"), peer_addr)
-            data = udpClientSock.recvfrom(1024)
-            data = data[0].decode()
             try:
+                data = udpClientSock.recvfrom(1024)
+                data = data[0].decode()
                 stats = json.loads(data)
                 break
             except:
                 continue
-
+        udpClientSock.settimeout(None)
         if stats["error"]:
             print("Divide by zero error at the Server. Maybe decrease the packet size? Try again.")
             print('\n')

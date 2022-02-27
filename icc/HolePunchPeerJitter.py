@@ -53,7 +53,7 @@ def signal_handler(sig, frame):
         udpClientSock.sendto(str.encode("done:a"), server_addr)
     udpClientSock.close()
     print('\n')
-    print("%d bytes echoed!\n" % (pktnumber))
+    #print("%d bytes echoed!\n" % (pktnumber))
     sys.exit(0)
 
 

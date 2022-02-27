@@ -150,6 +150,7 @@ if username == 'a':
         pktnumber = 0
         delays = []
         s = ''.join(random.choice(string.digits) for _ in range(pktsize))
+        s = "GET /search?q=test HTTP/2\nHost: www.bing.com\nUser-Agent: curl/7.54.0\nAccept: */"
         while (pktnumber < NumTimesToRun):
             udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()

@@ -145,8 +145,9 @@ if username == 'a':
                 data = udpClientSock.recvfrom(pktsize)
                 message = data[0]
                 address = data[1]
-                print("Recevied from: %s, %s: Elapsed: ", address[0], address[1], elapsed)
-                
+                print("Recevied from: %s, %s" % (address[0], address[1]))
+                elapsed=0
+                delays.append(elapsed)
                 #if data[0].decode()=="keep-alive":
                 #    continue
                 #if elapsed==0.0:

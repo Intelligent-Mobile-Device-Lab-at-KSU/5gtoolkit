@@ -142,19 +142,19 @@ if username == 'a':
             udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()
             while (True):
-                data = udpClientSock.recvfrom(1024)
-                if data[0].decode()=="keep-alive":
-                    continue
-                elapsed = time.time() - t
-                if elapsed==0.0:
-                    udpClientSock.sendto(s.encode(), peer_addr)
-                    t = time.time()
-                    continue
+                data = udpClientSock.recvfrom(pktsize)
                 message = data[0]
                 address = data[1]
                 print("Recevied from: %s, %s: Elapsed: ", address[0], address[1], elapsed)
-                delays.append(elapsed)
-                pktnumber += 1
+                
+                #if data[0].decode()=="keep-alive":
+                #    continue
+                #if elapsed==0.0:
+                #    udpClientSock.sendto(s.encode(), peer_addr)
+                #    t = time.time()
+                #    continue
+                #delays.append(elapsed)
+                #pktnumber += 1
 
         if len(delays) == 0:
             print("Divide by zero error. Maybe decrease the packet size? Try again.")

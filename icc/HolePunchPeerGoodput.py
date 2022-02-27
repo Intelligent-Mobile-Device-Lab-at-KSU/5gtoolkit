@@ -124,6 +124,19 @@ if username == 'b':
     udpClientSock.settimeout(None)
     udpClientSock.sendto(str.encode("READY"), peer_addr)
 
+    
+udpClientSock.settimeout(5)
+print("Emptying buffer, please wait...")
+while (True):
+    try:
+        data = udpClientSock.recvfrom(packetSizeInBytes)
+        message = data[0]
+        address = data[1]
+        print("Recevied from: %s, %s, %d" % (address[0], address[1],random.randint(0, 100)))
+    except socket.timeout:
+        print("Done.")
+        udpClientSock.settimeout(None)
+        break
 print("Hole-Punch system ready.")
 # Device 1 should be logged into hole-punch server as: a
 if username == 'a':
@@ -151,17 +164,19 @@ if username == 'a':
 
         print("Done. Awaiting Stats From Peer...")
         stats = []
+        udpClientSock.settimeout(5)
         while True:
+            print("Attempting to fetch results")
             udpClientSock.sendto(str.encode("peer_finish"), peer_addr)
-            data = udpClientSock.recvfrom(1024)
-            data = data[0].decode()
-            print(data)
             try:
+                data = udpClientSock.recvfrom(1024)
+                data = data[0].decode()
+                #print(data)
                 stats = json.loads(data)
                 break
             except:
                 continue
-
+        udpClientSock.settimeout(None)
         print("Stats Received.")
 
         totalBytesRecvd = stats["totalBytesRecvd"]
@@ -187,6 +202,18 @@ if username == 'a':
             udpClientSock.close()
             break
         elif x == "y":
+            udpClientSock.settimeout(5)
+            print("Emptying buffer, please wait...")
+            while (True):
+                try:
+                    data = udpClientSock.recvfrom(packetSizeInBytes)
+                    message = data[0]
+                    address = data[1]
+                    print("Recevied from: %s, %s, %d" % (address[0], address[1],random.randint(0, 100)))
+                except socket.timeout:
+                    print("Done.")
+                    udpClientSock.settimeout(None)
+                    break
             continue
 
 # Device 2 should be logged into relay server as: b

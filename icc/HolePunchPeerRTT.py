@@ -149,28 +149,25 @@ if username == 'a':
         print('Sending Packets')
         pktnumber = 0
         delays = []
+        s = ''.join(random.choice(string.digits) for _ in range(pktsize))
         while (pktnumber < NumTimesToRun):
-            s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()
-            print("Sent Pkt")
-            while (True):
-                data = udpClientSock.recvfrom(pktsize)
-                #message = data[0]
-                #address = data[1]
-                elapsed=time.time()-t
-                delays.append(elapsed)
-                #print("Recevied from: %s, %s, %0.5f" % (address[0], address[1],elapsed))
-                pktnumber += 1
-                break
-                #if data[0].decode()=="keep-alive":
-                #    continue
-                #if elapsed==0.0:
-                #    udpClientSock.sendto(s.encode(), peer_addr)
-                #    t = time.time()
-                #    continue
-                #delays.append(elapsed)
-                #pktnumber += 1
+            data = udpClientSock.recvfrom(pktsize)
+            elapsed=time.time()-t
+            delays.append(elapsed)
+            pktnumber += 1
+        #message = data[0]
+        #address = data[1]
+        #print("Recevied from: %s, %s, %0.5f" % (address[0], address[1],elapsed))
+        #if data[0].decode()=="keep-alive":
+        #    continue
+        #if elapsed==0.0:
+        #    udpClientSock.sendto(s.encode(), peer_addr)
+        #    t = time.time()
+        #    continue
+        #delays.append(elapsed)
+        #pktnumber += 1
 
         if len(delays) == 0:
             print("Divide by zero error. Maybe decrease the packet size? Try again.")

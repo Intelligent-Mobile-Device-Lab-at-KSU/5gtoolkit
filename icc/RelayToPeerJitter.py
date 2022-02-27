@@ -70,6 +70,18 @@ while ("PEER" not in respFromServer):
 
 udpClientSock.sendto(str.encode("OK"), server_addr)
 
+udpClientSock.settimeout(5)
+print("Emptying buffer, please wait...")
+while (True):
+    try:
+        data = udpClientSock.recvfrom(pktsize)
+        message = data[0]
+        address = data[1]
+        print("Recevied from: %s, %s, %d" % (address[0], address[1],random.randint(0, 100)))
+    except socket.timeout:
+        print("Done.")
+        udpClientSock.settimeout(None)
+        break
 print("Peer found. Peer Jitter system ready.")
 
 # Device 1 should be logged into rendezvous server as: a
@@ -139,6 +151,18 @@ if username == 'a':
                 udpClientSock.close()
                 break
             elif x == "y":
+                udpClientSock.settimeout(5)
+                print("Emptying buffer, please wait...")
+                while (True):
+                    try:
+                        data = udpClientSock.recvfrom(pktsize)
+                        message = data[0]
+                        address = data[1]
+                        print("Recevied from: %s, %s, %d" % (address[0], address[1],random.randint(0, 100)))
+                    except socket.timeout:
+                        print("Done.")
+                        udpClientSock.settimeout(None)
+                        break
                 continue
 
 

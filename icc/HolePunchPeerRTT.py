@@ -135,7 +135,7 @@ while (True):
         data = udpClientSock.recvfrom(pktsize)
         message = data[0]
         address = data[1]
-        print("Recevied from: %s, %s, s%" % (address[0], address[1],''.join(random.choice(string.digits) for _ in range(pktsize))))
+        print("Recevied from: %s, %s, d%" % (address[0], address[1],random.randint(0, 100)))
     except socket.timeout:
         print("Done.")
         udpClientSock.settimeout(None)

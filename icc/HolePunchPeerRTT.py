@@ -156,11 +156,11 @@ if username == 'a':
             print("Sent Pkt")
             while (True):
                 data = udpClientSock.recvfrom(pktsize)
-                message = data[0]
-                address = data[1]
+                #message = data[0]
+                #address = data[1]
                 elapsed=time.time()-t
                 delays.append(elapsed)
-                print("Recevied from: %s, %s, %0.5f" % (address[0], address[1],elapsed))
+                #print("Recevied from: %s, %s, %0.5f" % (address[0], address[1],elapsed))
                 pktnumber += 1
                 break
                 #if data[0].decode()=="keep-alive":
@@ -175,6 +175,7 @@ if username == 'a':
         if len(delays) == 0:
             print("Divide by zero error. Maybe decrease the packet size? Try again.")
         else:
+            print(delays)
             mu = sum(delays) / len(delays)
             variance = sum([((x - mu) ** 2) for x in delays]) / len(delays)
             stddev = variance ** 0.5
@@ -204,9 +205,9 @@ elif username == 'b':
     print('Listening for packets...')
     while True:
         data, client_addr = udpClientSock.recvfrom(pktsize)
-        message = data
-        address = client_addr
-        print("Recevied from: %s, %s" % (address[0], address[1]))
+        #message = data
+        #address = client_addr
+        #print("Recevied from: %s, %s" % (address[0], address[1]))
         if data.decode() == "peer_close":
             udpClientSock.close()
             break

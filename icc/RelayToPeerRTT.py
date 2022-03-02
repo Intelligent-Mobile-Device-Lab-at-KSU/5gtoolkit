@@ -101,9 +101,9 @@ if username == 'a':
             s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             udpClientSock.sendto(s.encode(), server_addr)
             t = time.time()
-            data = udpClientSock.recvfrom(pktsize)
+            data, client_addr = udpClientSock.recvfrom(pktsize)
             elapsed=time.time()-t
-            if data[0].decode()=="keep-alive":
+            if (data.decode() == "keep-alive") or ("keep-alive" in data.decode()):
                 continue
             if elapsed==0.0:
                 continue
@@ -164,7 +164,7 @@ elif username == 'b':
         if data.decode() == "peer_close":
             udpClientSock.close()
             break
-        elif data.decode() == "keep-alive":
+        elif (data.decode() == "keep-alive") or ("keep-alive" in data.decode()):
             continue
         else:
             udpClientSock.sendto(data, client_addr)

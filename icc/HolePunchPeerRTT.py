@@ -151,7 +151,7 @@ if username == 'a':
         delays = []
         while (pktnumber < NumTimesToRun):
             s = ''.join(random.choice(string.digits) for _ in range(pktsize))
-            udpClientSock.sendto(s.encode(), server_addr)
+            udpClientSock.sendto(s.encode(), peer_addr)
             t = time.time()
             data, client_addr = udpClientSock.recvfrom(pktsize)
             elapsed=time.time()-t

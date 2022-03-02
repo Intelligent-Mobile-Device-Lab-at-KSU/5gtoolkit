@@ -103,6 +103,8 @@ if username == 'a':
             t = time.time()
             data, client_addr = udpClientSock.recvfrom(pktsize)
             elapsed=time.time()-t
+            delays.append(elapsed)
+            pktnumber += 1
             udpClientSock.settimeout(1)
             print("Emptying buffer, please wait...")
             while (True):
@@ -115,6 +117,7 @@ if username == 'a':
                     print("Done.")
                     udpClientSock.settimeout(None)
                     break
+            continue
             if (data.decode() == "keep-alive") or ("keep-alive" in data.decode()):
                 continue
             if elapsed==0.0:
@@ -123,8 +126,6 @@ if username == 'a':
                 print(data.decode())
                 print(s==data.decode())
                 continue
-            delays.append(elapsed)
-            pktnumber += 1
         #if data[0].decode()=="keep-alive":
         #    continue
         #elapsed = time.time() - t

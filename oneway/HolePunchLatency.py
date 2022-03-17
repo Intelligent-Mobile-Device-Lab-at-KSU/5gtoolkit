@@ -147,6 +147,7 @@ while (True):
 print("Hole-Punch system ready.")
 # Device 1 should be logged into relay server as: a
 if username == 'a':
+    waitandpause=False
     print("Ensure b displays \"Listening for packets...\" then when ready...")
     x=input("Press any key to begin delay test through NAT Hole-Punch...")
     while True:
@@ -154,13 +155,15 @@ if username == 'a':
         pktnumber = 0
         while (pktnumber < NumTimesToRun):
             #s = ''.join(random.choice(string.digits) for _ in range(pktsize))
-            if (pktnumber % 2) == 0:
-                s='0'
-            else:
-                s='1'
+            s='1'
             udpClientSock.sendto(s.encode(), peer_addr)
             tcp_client_socket.sendall(s.encode())
-            print(s)
+            print("Sent 1")
+            time.sleep(1)
+            s='0'
+            udpClientSock.sendto(s.encode(), peer_addr)
+            tcp_client_socket.sendall(s.encode())
+            time.sleep(1)
             pktnumber += 1
             continue
 

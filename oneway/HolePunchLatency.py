@@ -1,5 +1,5 @@
-# HolePunchPeerRTT.py
-# Billy Kihei (c) 2021
+# HolePunchLatency.py
+# Billy Kihei (c) 2022
 # Intelligent Mobile Device Lab @ Kennesaw State University
 # Part of the 5Gtoolkit for testing commercial 5G networks.
 
@@ -183,7 +183,10 @@ elif username == 'b':
     print("WARNING: Ensure b shows: \"Listening for packets...\", before running a")
     x=input("Press any key to receiving packets...")
     print('Listening for packets...')
-    
+    HOST = "127.0.0.1"  # The server's hostname or IP address
+    PORT = 14400  # The port used by the TCP server
+    tcp_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    tcp_client_socket.connect((HOST, PORT))
     while True:
         data, client_addr = udpClientSock.recvfrom(pktsize)
         if data.decode() == "peer_close":
@@ -193,5 +196,5 @@ elif username == 'b':
             continue
         else:
             #pkt rcved
-            
+            tcp_client_socket.sendall(data)
             pktnumber += 1

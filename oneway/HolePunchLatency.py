@@ -50,6 +50,11 @@ server_addr = (conf["hole_punch_server"]["ip"], conf["hole_punch_server"]["port"
 
 udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+HOST = "127.0.0.1"  # The server's hostname or IP address
+PORT = 14400  # The port used by the TCP server
+tcp_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcp_client_socket.connect((HOST, PORT))
+
 def signal_handler(sig, frame):
     if username=='a':
         # sending relay server to logout all users
@@ -147,9 +152,13 @@ if username == 'a':
     while True:
         print('Sending Packets')
         pktnumber = 0
-        delays = []
         while (pktnumber < NumTimesToRun):
-            s = ''.join(random.choice(string.digits) for _ in range(pktsize))
+            #s = ''.join(random.choice(string.digits) for _ in range(pktsize))
+            if (pktnumber % 2) == 0:
+                s="0"
+            else:
+                s="1"
+            tcp_client_socket.sendall(s.encode())
             udpClientSock.sendto(s.encode(), peer_addr)
             data, client_addr = udpClientSock.recvfrom(pktsize)
             pktnumber += 1
@@ -183,10 +192,6 @@ elif username == 'b':
     print("WARNING: Ensure b shows: \"Listening for packets...\", before running a")
     x=input("Press any key to receiving packets...")
     print('Listening for packets...')
-    HOST = "127.0.0.1"  # The server's hostname or IP address
-    PORT = 14400  # The port used by the TCP server
-    tcp_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    tcp_client_socket.connect((HOST, PORT))
     while True:
         data, client_addr = udpClientSock.recvfrom(pktsize)
         if data.decode() == "peer_close":

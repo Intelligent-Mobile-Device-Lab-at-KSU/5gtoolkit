@@ -158,9 +158,9 @@ if username == 'a':
                 s="0"
             else:
                 s="1"
-            tcp_client_socket.sendall(s.encode())
             udpClientSock.sendto(s.encode(), peer_addr)
-            data, client_addr = udpClientSock.recvfrom(pktsize)
+            tcp_client_socket.sendall(s.encode())
+            println(s.decode())
             pktnumber += 1
             continue
 
@@ -202,4 +202,5 @@ elif username == 'b':
         else:
             #pkt rcved
             tcp_client_socket.sendall(data)
+            println(data.decode())
             pktnumber += 1

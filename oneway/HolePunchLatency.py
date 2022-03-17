@@ -155,12 +155,12 @@ if username == 'a':
         while (pktnumber < NumTimesToRun):
             #s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             if (pktnumber % 2) == 0:
-                s="0"
+                s='0'
             else:
-                s="1"
+                s='1'
             udpClientSock.sendto(s.encode(), peer_addr)
             tcp_client_socket.sendall(s.encode())
-            print(s.decode())
+            print(s)
             pktnumber += 1
             continue
 

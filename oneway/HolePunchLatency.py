@@ -157,7 +157,7 @@ if username == 'a':
             s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             udpClientSock.sendto(s.encode(), peer_addr)
             tcp_client_socket.sendall("1".encode())
-            print("Sent Pkt")
+            print("Sent Pkt #%d" % (pktnumber+1))
             time.sleep(1)
             udpClientSock.sendto("0".encode(), peer_addr)
             tcp_client_socket.sendall("0".encode())

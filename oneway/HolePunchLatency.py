@@ -14,8 +14,8 @@
 # 2. Download the 5gtoolkit git repo.
 # 3. Edit the config.json file so that HolePunchRendezvousServer server ip and port are correct.
 # 4. python HolePunchLatency.py <a|b> <pktsize> <#ofpackets>
-# 5. Example: python HolePunchLatency.py a 1 10, means: login as user A, send 1 byte 10 times to B
-# 6. Example: python HolePunchLatency.py b, means: login as user B, get ten packets of size one byte from A
+# 5. Example: python HolePunchLatency.py a 1 100, means: login as user A, send 1 byte 10 times to B
+# 6. Example: python HolePunchLatency.py b 1 100, means: login as user B, get one-hundred packets of size one byte from A
 
 import socket
 import sys
@@ -154,15 +154,13 @@ if username == 'a':
         print('Sending Packets')
         pktnumber = 0
         while (pktnumber < NumTimesToRun):
-            #s = ''.join(random.choice(string.digits) for _ in range(pktsize))
-            s='1'
+            s = ''.join(random.choice(string.digits) for _ in range(pktsize))
             udpClientSock.sendto(s.encode(), peer_addr)
-            tcp_client_socket.sendall(s.encode())
-            print("Sent 1")
+            tcp_client_socket.sendall("1".encode())
+            print("Sent Pkt")
             time.sleep(1)
-            s='0'
-            udpClientSock.sendto(s.encode(), peer_addr)
-            tcp_client_socket.sendall(s.encode())
+            udpClientSock.sendto("0".encode(), peer_addr)
+            tcp_client_socket.sendall("0".encode())
             time.sleep(1)
             pktnumber += 1
             continue
@@ -203,7 +201,10 @@ elif username == 'b':
         elif data.decode() == "keep-alive":
             continue
         else:
-            #pkt rcved
-            tcp_client_socket.sendall(data)
-            print(data.decode())
+            if data.decode()=='0':
+               tcp_client_socket.sendall(data)
+               print('0')
+            else:
+              tcp_client_socket.sendall("1".encode())
+              print('1')
             pktnumber += 1

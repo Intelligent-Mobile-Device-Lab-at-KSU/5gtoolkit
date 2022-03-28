@@ -109,7 +109,7 @@ if username == 'a':
             print("Sent Pkt")
             time.sleep(1)
             s='0'
-            udpClientSock.sendto(s.encode(), peer_addr)
+            udpClientSock.sendto(s.encode(), server_addr)
             ss = '0'
             tcp_client_socket.sendall(ss.encode())
             time.sleep(1)

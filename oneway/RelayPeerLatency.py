@@ -47,6 +47,10 @@ server_addr = (conf["rendezvous_relay_server"]["ip"], conf["rendezvous_relay_ser
 
 udpClientSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
+HOST = "127.0.0.1"  # The server's hostname or IP address
+PORT = 14400  # The port used by the TCP server
+tcp_client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+tcp_client_socket.connect((HOST, PORT))
 
 def signal_handler(sig, frame):
     if username=='a':
